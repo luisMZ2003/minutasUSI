@@ -1,0 +1,2 @@
+## Pages
+- [Generador de Minutas de Reunión](/): Sistema profesional para generar minutas de reunión con formato estructurado y completo
