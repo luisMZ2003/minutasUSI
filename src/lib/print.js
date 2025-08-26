@@ -405,28 +405,54 @@ export const generatePrintHTML = (meetingData) => {
 
             <section class="section allow-break">
               <div class="section-title avoid-break">6. ACUERDOS</div>
-              <div class="table-container ${(acuerdos && acuerdos.length > 5) ? 'large-table' : ''}">
-                <table class="agreements-table">
-                  <thead>
-                    <tr>
-                      <th>DESCRIPCIÓN</th>
-                      <th>RESPONSABLE</th>
-                      <th>FECHA ENTREGA</th>
-                      <th>REQUERIMIENTOS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${(acuerdos || []).map(acuerdo => `
+
+              ${(acuerdos || []).map(acuerdo => `
+                <div class="table-container" style="margin-bottom:20px;">
+                  <table class="agreements-table">
+                    <thead>
+                      <tr>
+                        <th>DESCRIPCIÓN</th>
+                        <th>RESPONSABLE</th>
+                        <th>FECHA ENTREGA</th>
+                        <th>REQUERIMIENTOS</th>
+                      </tr>
+                    </thead>
+                    <tbody>
                       <tr>
                         <td>${acuerdo.descripcion || ''}</td>
                         <td>${acuerdo.responsable || ''}</td>
                         <td>${acuerdo.fecha || ''}</td>
                         <td>${acuerdo.requerimientos || ''}</td>
                       </tr>
-                    `).join('')}
-                  </tbody>
-                </table>
-              </div>
+                    </tbody>
+                  </table>
+
+                  ${(acuerdo.actividades && acuerdo.actividades.length > 0) ? `
+                    <table class="agreements-table" style="margin-top:8px;">
+                      <thead>
+                        <tr>
+                          <th>Actividad</th>
+                          <th>Responsables</th>
+                          <th>Entregable</th>
+                          <th>Fecha Inicio</th>
+                          <th>Fecha Fin</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${acuerdo.actividades.map(act => `
+                          <tr>
+                            <td>${act.actividad || ''}</td>
+                            <td>${(act.responsables || []).filter(r => r.trim()).join(', ')}</td>
+                            <td>${act.entregable || ''}</td>
+                            <td>${act.fechaInicio || ''}</td>
+                            <td>${act.fechaFin || ''}</td>
+                          </tr>
+                        `).join('')}
+                      </tbody>
+                    </table>
+                  ` : ''}
+                </div>
+              `).join('')}
             </section>
 
             <section class="section allow-break">

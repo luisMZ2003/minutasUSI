@@ -11,11 +11,28 @@ const initialMeetingData = {
   selected_administrativa: [],
   titulares: {},
   exposicion_ct: '',
-  acuerdos: [{ descripcion: '', responsable: '', fecha: '', requerimientos: '' }],
+  acuerdos: [
+    {
+      descripcion: '',
+      responsable: '',
+      fecha: '',
+      requerimientos: '',
+      actividades: [
+        {
+          id: Date.now(),
+          actividad: '',
+          responsables: [''],
+          entregable: '',
+          fechaInicio: '',
+          fechaFin: ''
+        }
+      ]
+    }
+  ],
   asistentes: [{ nombre: '', puesto: '', area: '' }],
   signers: [{ text: '', email: '', signature: '' }],
-  responsables_programa: [], // Initialize as empty
-  personal_apoyo: [],       // Initialize as empty
+  responsables_programa: [],
+  personal_apoyo: [],
   exposicion_areas: ''
 };
 
@@ -24,7 +41,7 @@ export const useMeetingData = () => {
   const [meetingData, setMeetingData] = useState(initialMeetingData);
   const [loading, setLoading] = useState(false);
 
-  // This effect will run once on component mount to ensure initial data is clean
+  // Reset inicial
   useEffect(() => {
     setMeetingData(initialMeetingData);
   }, []);
@@ -53,10 +70,29 @@ export const useMeetingData = () => {
     }));
   }, []);
 
+  // AGREEMENTS
   const addAcuerdo = useCallback(() => {
     setMeetingData((prevData) => ({
       ...prevData,
-      acuerdos: [...prevData.acuerdos, { descripcion: '', responsable: '', fecha: '', requerimientos: '' }],
+      acuerdos: [
+        ...prevData.acuerdos,
+        {
+          descripcion: '',
+          responsable: '',
+          fecha: '',
+          requerimientos: '',
+          actividades: [
+            {
+              id: Date.now(),
+              actividad: '',
+              responsables: [''],
+              entregable: '',
+              fechaInicio: '',
+              fechaFin: ''
+            }
+          ]
+        }
+      ],
     }));
   }, []);
 
@@ -76,6 +112,7 @@ export const useMeetingData = () => {
     }));
   }, []);
 
+  // ASISTENTES
   const addAsistente = useCallback(() => {
     setMeetingData((prevData) => ({
       ...prevData,
@@ -99,6 +136,7 @@ export const useMeetingData = () => {
     }));
   }, []);
 
+  // SIGNERS
   const updateSignerField = useCallback((index, field, value) => {
     setMeetingData((prevData) => ({
       ...prevData,
@@ -108,6 +146,7 @@ export const useMeetingData = () => {
     }));
   }, []);
 
+  // EQUIPOS
   const addTeamMember = useCallback((type) => {
     setMeetingData((prevData) => ({
       ...prevData,
