@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
   }, [handleSession]);
 
   const signUp = useCallback(async (email, password, options) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options,
@@ -48,13 +48,31 @@ export const AuthProvider = ({ children }) => {
         title: "Sign up Failed",
         description: error.message || "Something went wrong",
       });
+      return { error };
+    }
+
+    // Si el usuario se creó correctamente, crea el registro en la tabla usuarios
+    // Esto permite que cada usuario tenga múltiples minutas y pueda administrarlas (crear, actualizar, eliminar) en el futuro.
+    // La lógica para listar, actualizar y eliminar minutas por usuario se desarrollará más adelante.
+    const userId = data?.user?.id;
+    if (userId) {
+      const { error: dbError } = await supabase
+        .from('usuarios')
+        .insert([{ id: userId, email }]);
+      if (dbError) {
+        toast({
+          variant: "destructive",
+          title: "Error creando usuario en la base de datos",
+          description: dbError.message,
+        });
+      }
     }
 
     return { error };
   }, [toast]);
 
   const signIn = useCallback(async (email, password) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -65,6 +83,29 @@ export const AuthProvider = ({ children }) => {
         title: "Sign in Failed",
         description: error.message || "Something went wrong",
       });
+      return { error };
+    }
+
+    // Verificar si el usuario existe en la tabla usuarios, si no, crearlo
+    const userId = data?.user?.id;
+    if (userId) {
+      const { data: userDb, error: dbError } = await supabase
+        .from('usuarios')
+        .select('id')
+        .eq('id', userId)
+        .single();
+      if (!userDb && !dbError) {
+        // Si no existe, lo creamos
+        const { error: insertError } = await supabase
+          .from('usuarios')
+          .insert([{ id: userId, email }]);
+        if (!insertError) {
+          toast({
+            title: "Usuario creado automáticamente",
+            description: "Tu perfil fue registrado correctamente en la base de datos.",
+          });
+        }
+      }
     }
 
     return { error };

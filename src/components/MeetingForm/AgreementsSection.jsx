@@ -214,19 +214,21 @@ const AgreementsSection = ({ acuerdos, addAcuerdo, removeAcuerdo, updateAcuerdo 
                     </div>
                   ))}
                 </div>
-
+                <Label className="p-3">Entregable</Label>
                 <Input
                   placeholder="Entregable..."
                   value={actividad.entregable}
                   onChange={(e) => updateActividad(index, aIndex, 'entregable', e.target.value)}
                 />
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-2">
+                  <Label>Fecha de Inicio</Label>
                   <Input
                     type="date"
                     value={actividad.fechaInicio}
                     onChange={(e) => updateActividad(index, aIndex, 'fechaInicio', e.target.value)}
                   />
+                   <Label>Fecha de Fin</Label>
                   <Input
                     type="date"
                     value={actividad.fechaFin}

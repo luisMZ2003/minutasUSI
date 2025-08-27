@@ -21,6 +21,8 @@ import { useAuth } from '@/contexts/SupabaseAuthContext';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
+import { supabase } from '@/lib/customSupabaseClient';
+
 const AuthForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -101,6 +103,43 @@ const AuthForm = () => {
 
 
 const App = () => {
+  // Guardar minuta en Supabase
+  async function saveMinuta() {
+    try {
+      toast({
+        title: "Guardando minuta...",
+        description: "Por favor espere, estamos guardando la información.",
+      });
+      // Guardar en la tabla 'minutas' (ajusta el nombre si es diferente)
+      // Si la fecha está vacía, envía null
+      const minutaData = {
+        ...meetingData,
+        usuario_id: session?.user?.id,
+        fecha: meetingData.fecha === '' ? null : meetingData.fecha
+      };
+      const { error } = await supabase
+        .from('minutas')
+        .insert([minutaData]);
+      if (error) {
+        toast({
+          title: "Error al guardar",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "¡Minuta guardada!",
+          description: "La información se guardó correctamente.",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "Error inesperado",
+        description: err && err.message ? err.message : String(err),
+        variant: "destructive",
+      });
+    }
+  }
   const { toast } = useToast();
   const { session, signOut, loading: authLoading } = useAuth();
   const {
@@ -314,6 +353,17 @@ const App = () => {
                   />
                   
                   <div className="flex justify-center items-center pt-6 gap-4">
+
+                       {/* <Button
+                          onClick={saveMinuta}
+                          className="bg-blue-600 hover:bg-blue-700 px-8 py-3 text-lg font-semibold shadow-lg transition-all duration-300 text-white"
+                          size="lg"
+                        >
+                          <CheckCircle className="h-5 w-5 mr-2" />
+                          Guardar Minuta
+                        </Button> */}
+
+
                     <Button
                       onClick={generatePdf}
                       className="bg-green-600 hover:bg-green-700 px-8 py-3 text-lg font-semibold shadow-lg transition-all duration-300 text-white"
