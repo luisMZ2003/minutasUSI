@@ -81,14 +81,6 @@ const AgreementsSection = ({ acuerdos, addAcuerdo, removeAcuerdo, updateAcuerdo 
         <h3 className="text-lg font-semibold text-gray-800 border-b-2 border-gold-DEFAULT pb-2 w-full">
           6. Acuerdos
         </h3>
-        <Button
-          onClick={addAcuerdo}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white p-4 "
-          size="sm"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Agregar Acuerdo
-        </Button>
       </div>
 
       {safeAcuerdos.map((acuerdo, index) => (
@@ -254,6 +246,15 @@ const AgreementsSection = ({ acuerdos, addAcuerdo, removeAcuerdo, updateAcuerdo 
           )}
         </motion.div>
       ))}
+      {/* Botón Agregar Acuerdo fijo al final */}
+      <Button
+        onClick={addAcuerdo}
+        className="bg-indigo-600 hover:bg-indigo-700 text-white p-4 w-full mt-4"
+        size="sm"
+      >
+        <Plus className="h-4 w-4 mr-2" />
+        Agregar Acuerdo
+      </Button>
     </div>
   );
 };

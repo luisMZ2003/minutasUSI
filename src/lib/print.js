@@ -40,9 +40,9 @@ export const generatePrintHTML = (meetingData) => {
               margin: 0;
               padding: 2rem;
               line-height: 1.6;
-              color: #2c3e50;
+              color: #744C34; /* Twine 700 */
               font-size: 12px;
-              background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+              background: linear-gradient(135deg, #F8F5EE 0%, #F4D7D9 100%); /* Twine 50 + Night Shadz 200 */
               min-height: 100vh;
             }
             
@@ -76,11 +76,10 @@ export const generatePrintHTML = (meetingData) => {
               align-items: center;
               text-align: center;
               font-weight: 600;
-              font-size: 18px;
+              font-size: 26px;
               margin-bottom: 3rem;
               padding: 1.5rem 2rem;
-              background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #7c3aed 100%);
-              color: white;
+              color: #842D42; /* Twine 50 */
               border-radius: 12px;
               box-shadow: 0 8px 32px rgba(30, 58, 138, 0.3);
               position: relative;
@@ -143,14 +142,14 @@ export const generatePrintHTML = (meetingData) => {
               left: 0;
               width: 4px;
               height: 100%;
-              background: linear-gradient(180deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+              background: linear-gradient(180deg, #BF9B69 0%, #B84359 100%); /* Twine 400 + Night Shadz 600 */
             }
             
             .section-title {
               font-weight: 700;
               font-size: 16px;
               margin-bottom: 1.5rem;
-              color: #1e293b;
+              color: #B84359; /* Night Shadz 600 */
               padding-left: 1rem;
               position: relative;
               display: flex;
@@ -163,9 +162,9 @@ export const generatePrintHTML = (meetingData) => {
               left: -1rem;
               width: 6px;
               height: 6px;
-              background: #3b82f6;
+              background: #A87D4A; /* Twine 500 */
               border-radius: 50%;
-              box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+              box-shadow: 0 0 0 3px rgba(184, 67, 89, 0.2); /* Night Shadz 600 */
             }
             
             /* Tablas */
@@ -200,8 +199,8 @@ export const generatePrintHTML = (meetingData) => {
             }
             
             .agreements-table th, .attendees-table th, .activities-table th {
-              background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-              color: white;
+              background: linear-gradient(135deg, #B84359 0%, #A87D4A 100%); /* Night Shadz 600 + Twine 500 */
+              color: #F8F5EE; /* Twine 50 */
               font-weight: 600;
               font-size: 11px;
               text-transform: uppercase;
@@ -223,15 +222,96 @@ export const generatePrintHTML = (meetingData) => {
 
             /* Sección final */
             .final-section {
-              text-align: center;
+              background: #fff;
+              border-radius: 20px 20px 12px 12px;
               margin-top: 4rem;
-              padding: 2.5rem 2rem;
-              background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-              color: white;
-              border-radius: 12px;
-              box-shadow: 0 8px 32px rgba(30, 41, 59, 0.3);
+              padding: 2.8rem 2rem 2.2rem 2rem;
+              border-top: 0;
+              box-shadow: 0 6px 32px rgba(184, 67, 89, 0.10);
+              color: #1e293b;
+              font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+              text-align: center;
               position: relative;
               overflow: hidden;
+            }
+            .final-section::before {
+              content: "";
+              display: block;
+              position: absolute;
+              top: -18px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 90%;
+              height: 14px;
+              background: #B84359;
+              border-radius: 0 0 16px 16px;
+              z-index: 1;
+            }
+            .final-section .quote-row {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 0.7rem;
+              margin-bottom: 1.6rem;
+              position: relative;
+              z-index: 2;
+            }
+            .final-section .quote-icon {
+              font-size: 2.1rem;
+              color: #B84359;
+              margin-right: 0.2rem;
+            }
+            .final-section .quote-text {
+              font-size: 1.18rem;
+              font-weight: 600;
+              color: #A87D4A;
+              font-family: 'Georgia', serif;
+              font-style: italic;
+              letter-spacing: 0.5px;
+            }
+            .responsible-section {
+              display: flex;
+              justify-content: center;
+              gap: 2.2rem;
+              margin-top: 1.5rem;
+              position: relative;
+              z-index: 2;
+              flex-wrap: wrap;
+            }
+            .responsible-group {
+              background: #f8f5ee;
+              border-radius: 14px;
+              box-shadow: 0 2px 12px rgba(168, 125, 74, 0.10);
+              padding: 1.2rem 1.7rem 1.1rem 1.7rem;
+              border: 1.5px solid #e2e8f0;
+              min-width: 220px;
+              max-width: 320px;
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+              margin-bottom: 0.5rem;
+            }
+            .responsible-title {
+              font-size: 1.08rem;
+              font-weight: 700;
+              color: #B84359;
+              margin-bottom: 0.7rem;
+              text-align: left;
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+            }
+            .responsible-title .title-icon {
+              font-size: 1.1rem;
+              color: #A87D4A;
+            }
+            .responsible-list {
+              list-style: none;
+              padding: 0;
+              margin: 0;
+              color: #1e293b;
+              font-size: 1rem;
+              font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
             }
 
             /* 🔹 Reglas impresión */
@@ -326,7 +406,7 @@ export const generatePrintHTML = (meetingData) => {
               <div class="section-title">6. ACUERDOS</div>
               ${(acuerdos || []).map((acuerdo, index) => `
                 <div style="margin-bottom: 2rem;">
-                  <h4 class="agreement-title">Acuerdo ${index + 1}</h4>
+                  <h4 class="agreement-title" style="margin-bottom: 0.75rem;">Acuerdo ${index + 1}</h4>
                   <div class="table-wrapper">
                     <table class="agreements-table">
                       <thead>
@@ -369,8 +449,10 @@ export const generatePrintHTML = (meetingData) => {
                       <div><strong>Nombre:</strong> ${signer.text || ''}</div>
                       <div><strong>Correo:</strong> ${signer.email || ''}</div>
                       <div class="signature-area">
-                        <strong>Firma:</strong><br/>
-                        ${signer.signature ? `<img src="${signer.signature}" class="signature-image"/>` : '<div>Sin firma</div>'}
+                        <strong style="display:block;margin-bottom:8px;">Firma:</strong>
+                        <div class="signature-box" style="width:100%;height:100px;border:2px dashed #cbd5e1;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;">
+                          ${signer.signature ? `<img src="${signer.signature}" class="signature-image" style="max-width:95%;max-height:95%;object-fit:contain;"/>` : ''}
+                        </div>
                       </div>
                     </div>
                   </div>`).join('')}
@@ -378,14 +460,17 @@ export const generatePrintHTML = (meetingData) => {
             </section>` : ''}
 
             <footer class="final-section page-break-before">
-              <div class="quote-text">"Un dedo no puede aplaudir, pero todos juntos sí."</div>
+              <div class="quote-row">
+                <span class="quote-icon">&#10077;</span>
+                <span class="quote-text">Un dedo no puede aplaudir, pero todos juntos sí.</span>
+              </div>
               <div class="responsible-section">
                 <div class="responsible-group">
-                  <div class="responsible-title">Responsables del Programa:</div>
+                  <div class="responsible-title"><span class="title-icon">👤</span> Responsables del Programa</div>
                   <ul class="responsible-list">${(responsables_programa || []).map(r => `<li>${r}</li>`).join('')}</ul>
                 </div>
                 <div class="responsible-group">
-                  <div class="responsible-title">Personal de Apoyo:</div>
+                  <div class="responsible-title"><span class="title-icon">🤝</span> Personal de Apoyo</div>
                   <ul class="responsible-list">${(personal_apoyo || []).map(p => `<li>${p}</li>`).join('')}</ul>
                 </div>
               </div>

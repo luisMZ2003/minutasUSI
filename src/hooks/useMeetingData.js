@@ -172,6 +172,7 @@ export const useMeetingData = () => {
 
   return {
     meetingData,
+    setMeetingData,
     loading,
     updateField,
     updateSelectedAreas,

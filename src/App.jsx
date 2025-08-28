@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import { FileText, CheckCircle, Upload, LogOut, Loader2, Download } from 'lucide-react';
@@ -23,18 +24,106 @@ import html2canvas from 'html2canvas';
 
 import { supabase } from '@/lib/customSupabaseClient';
 
-const AuthForm = () => {
+const AuthForm = ({ navigate }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const { signIn, signUp, loading } = useAuth();
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    let result;
     if (isLogin) {
-      await signIn(email, password);
+      result = await signIn(email, password);
     } else {
-      await signUp(email, password);
+      result = await signUp(email, password);
+    }
+    if (!result?.error) {
+      navigate('/minutas');
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        <Card className="w-full max-w-md shadow-2xl border-t-8 border-t-wine-DEFAULT rounded-xl overflow-hidden">
+          <CardHeader className="bg-wine-DEFAULT py-2 p-3">
+            <CardTitle className="text-3xl font-extrabold text-black text-center">
+              {isLogin ? 'Bienvenido' : 'Crea tu Cuenta'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <Label htmlFor="email" className="text-lg font-semibold text-gray-700 mb-2 block">Correo Electrónico</Label>
+                <Input 
+                  id="email" 
+                  type="email" 
+                  placeholder="tu@correo.com" 
+                  value={email} 
+                  onChange={(e) => setEmail(e.target.value)} 
+                  required 
+                  className="h-12 text-base border-gray-300 focus:border-wine-DEFAULT focus:ring-wine-DEFAULT transition-all duration-300"
+                />
+              </div>
+              <div>
+                <Label htmlFor="password" className="text-lg font-semibold text-gray-700 mb-2 block">Contraseña</Label>
+                <Input 
+                  id="password" 
+                  type="password" 
+                  placeholder="••••••••" 
+                  value={password} 
+                  onChange={(e) => setPassword(e.target.value)} 
+                  required 
+                  className="h-12 text-base border-gray-300 focus:border-wine-DEFAULT focus:ring-wine-DEFAULT transition-all duration-300"
+                />
+              </div>
+              <button 
+                type="submit" 
+                disabled={loading} 
+                className="w-full h-12 text-xl bg-yellow-500 text-white font-bold shadow-lg rounded-xl transition-all duration-300 transform hover:scale-105"
+              >
+                {loading ? <Loader2 className="mr-2 h-6 w-6 animate-spin" /> : (isLogin ? 'Entrar' : 'Registrarse')}
+              </button>
+            </form>
+            <motion.button 
+              type="button"
+              onClick={() => setIsLogin(!isLogin)} 
+              className="w-full h-12 text-xl font-bold shadow-lg transition-all duration-300 transform hover:scale-105"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
+            </motion.button>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </div>
+  );
+};
+
+
+// Componente de formulario de autenticación con redirección tras login
+const AuthFormWithRedirect = ({ navigate }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLogin, setIsLogin] = useState(true);
+  const { signIn, signUp, loading } = useAuth();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    let result;
+    if (isLogin) {
+      result = await signIn(email, password);
+    } else {
+      result = await signUp(email, password);
+    }
+    if (!result?.error) {
+      navigate('/minutas');
     }
   };
 
@@ -101,8 +190,9 @@ const AuthForm = () => {
   );
 };
 
-
 const App = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
   // Guardar minuta en Supabase
   async function saveMinuta() {
     try {
@@ -110,16 +200,26 @@ const App = () => {
         title: "Guardando minuta...",
         description: "Por favor espere, estamos guardando la información.",
       });
-      // Guardar en la tabla 'minutas' (ajusta el nombre si es diferente)
-      // Si la fecha está vacía, envía null
       const minutaData = {
         ...meetingData,
         usuario_id: session?.user?.id,
         fecha: meetingData.fecha === '' ? null : meetingData.fecha
       };
-      const { error } = await supabase
-        .from('minutas')
-        .insert([minutaData]);
+      let error;
+      if (id) {
+        // Actualizar minuta existente
+        const res = await supabase
+          .from('minutas')
+          .update(minutaData)
+          .eq('id', id);
+        error = res.error;
+      } else {
+        // Crear nueva minuta
+        const res = await supabase
+          .from('minutas')
+          .insert([minutaData]);
+        error = res.error;
+      }
       if (error) {
         toast({
           title: "Error al guardar",
@@ -144,6 +244,7 @@ const App = () => {
   const { session, signOut, loading: authLoading } = useAuth();
   const {
     meetingData,
+    setMeetingData,
     loading: dataLoading,
     updateField,
     updateSelectedAreas,
@@ -160,6 +261,22 @@ const App = () => {
     updateTeamMember,
   } = useMeetingData();
 
+  useEffect(() => {
+    const fetchMinuta = async () => {
+      if (id) {
+        const { data, error } = await supabase
+          .from('minutas')
+          .select('*')
+          .eq('id', id)
+          .single();
+        if (data && !error) {
+          setMeetingData(data);
+        }
+      }
+    };
+    fetchMinuta();
+  }, [id, setMeetingData]);
+
   const addSigner = () => addTeamMember('signers');
   const removeSigner = (index) => removeTeamMember('signers', index);
 
@@ -172,8 +289,90 @@ const App = () => {
   }
 
   if (!session) {
-    return <AuthForm />;
+    return <AuthForm navigate={navigate} />;
   }
+// Componente de formulario de autenticación con redirección tras login
+const AuthFormWithRedirect = ({ navigate }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLogin, setIsLogin] = useState(true);
+  const { signIn, signUp, loading } = useAuth();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    let result;
+    if (isLogin) {
+      result = await signIn(email, password);
+    } else {
+      result = await signUp(email, password);
+    }
+    if (!result?.error) {
+      navigate('/minutas');
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        <Card className="w-full max-w-md shadow-2xl border-t-8 border-t-wine-DEFAULT rounded-xl overflow-hidden">
+          <CardHeader className="bg-wine-DEFAULT py-6">
+            <CardTitle className="text-3xl font-extrabold text-black text-center">
+              {isLogin ? 'Bienvenido de Nuevo' : 'Crea tu Cuenta'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <Label htmlFor="email" className="text-lg font-semibold text-gray-700 mb-2 block">Correo Electrónico</Label>
+                <Input 
+                  id="email" 
+                  type="email" 
+                  placeholder="tu@correo.com" 
+                  value={email} 
+                  onChange={(e) => setEmail(e.target.value)} 
+                  required 
+                  className="h-12 text-base border-gray-300 focus:border-wine-DEFAULT focus:ring-wine-DEFAULT transition-all duration-300"
+                />
+              </div>
+              <div>
+                <Label htmlFor="password" className="text-lg font-semibold text-gray-700 mb-2 block">Contraseña</Label>
+                <Input 
+                  id="password" 
+                  type="password" 
+                  placeholder="••••••••" 
+                  value={password} 
+                  onChange={(e) => setPassword(e.target.value)} 
+                  required 
+                  className="h-12 text-base border-gray-300 focus:border-wine-DEFAULT focus:ring-wine-DEFAULT transition-all duration-300"
+                />
+              </div>
+              <button 
+                type="submit" 
+                disabled={loading} 
+                className="w-full h-12 text-xl bg-yellow-500 text-white font-bold shadow-lg transition-all duration-300 transform hover:scale-105"
+              >
+                {loading ? <Loader2 className="mr-2 h-6 w-6 animate-spin" /> : (isLogin ? 'Entrar' : 'Registrarse')}
+              </button>
+            </form>
+            <motion.button 
+              type="button"
+              onClick={() => setIsLogin(!isLogin)} 
+              className="w-full h-12 text-xl font-bold shadow-lg transition-all duration-300 transform hover:scale-105"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
+            </motion.button>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </div>
+  );
+};
   
   // No longer needed: const allSignaturesCollected = meetingData.signers?.every(s => s.signature);
   
@@ -306,10 +505,10 @@ const App = () => {
                   <Input id="logo-upload" type="file" accept="image/png, image/jpeg" onChange={handleLogoChange} className="w-full" />
                 </div>
               </div>
-              <Button onClick={signOut} variant="outline" className="self-end border-wine-DEFAULT text-wine-DEFAULT hover:bg-wine-DEFAULT hover:text-white">
+              <button onClick={() => navigate('/minutas')} variant="outline" className="self-end border-wine-DEFAULT text-wine-DEFAULT hover:bg-wine-DEFAULT hover:text-white">
                 <LogOut className="h-4 w-4 mr-2" />
-                Salir
-              </Button>
+                Regresar
+              </button>
             </div>
           </motion.header>
 
