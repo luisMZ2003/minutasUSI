@@ -354,14 +354,14 @@ const App = () => {
                   
                   <div className="flex justify-center items-center pt-6 gap-4">
 
-                       {/* <Button
+                        <Button
                           onClick={saveMinuta}
                           className="bg-blue-600 hover:bg-blue-700 px-8 py-3 text-lg font-semibold shadow-lg transition-all duration-300 text-white"
                           size="lg"
                         >
                           <CheckCircle className="h-5 w-5 mr-2" />
                           Guardar Minuta
-                        </Button> */}
+                        </Button>
 
 
                     <Button

@@ -96,15 +96,9 @@ export const AuthProvider = ({ children }) => {
         .single();
       if (!userDb && !dbError) {
         // Si no existe, lo creamos
-        const { error: insertError } = await supabase
+        await supabase
           .from('usuarios')
           .insert([{ id: userId, email }]);
-        if (!insertError) {
-          toast({
-            title: "Usuario creado automáticamente",
-            description: "Tu perfil fue registrado correctamente en la base de datos.",
-          });
-        }
       }
     }
 

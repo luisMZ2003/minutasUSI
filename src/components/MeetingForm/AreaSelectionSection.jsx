@@ -3,16 +3,22 @@ import { Label } from '@/components/ui/label';
 import MultiSelect from './MultiSelect';
 
 const normativeOptions = [
-    { value: 'Admisión', label: 'A. Admisión' },
-    { value: 'Promoción', label: 'B. Promoción' },
-    { value: 'Reconocimiento', label: 'C. Reconocimiento' },
-    { value: 'Cambio de Centro de Trabajo', label: 'D. Cambio de Centro de Trabajo' }
+    { value: 'Admisión Educación Básica', label: 'A. Admisión Educación Básica' },
+    { value: 'Admisión Educación Media Superior', label: 'B. Admisión Educación Media Superior' },
+    { value: 'Promoción Vertical Educación Básica', label: 'C. Promoción Vertical Educación Básica' },
+    { value: 'Promoción Vertical Educación Media Superior', label: 'D. Promoción Vertical Educación Media Superior' },
+    { value: 'Promoción a Horas Adicionales', label: 'E. Promoción a Horas Adicionales' },
+    { value: 'Promoción Horizontal', label: 'F. Promoción Horizontal' },
+    { value: 'Reconocimiento Beca Comisión', label: 'G. Reconocimiento Beca Comisión' },
+    { value: 'Reconocimiento Práctica Educativa', label: 'H. Reconocimiento Práctica Educativa' },
+    { value: 'Reconocimiento AAA', label: 'I. Reconocimiento AAA' },
 ];
 
 const administrativeOptions = [
-    { value: 'Jurídico', label: 'A. Jurídico' },
-    { value: 'Recursos Humanos', label: 'B. Recursos Humanos' },
-    { value: 'Administración', label: 'C. Administración' }
+    { value: 'Vinculación de Procesos Transversales y Gestión Normativa (CCT)', label: 'A. Vinculación de Procesos Transversales y Gestión Normativa (CCT)' },
+    { value: 'Coordinación de Calificación e Instrumentación', label: 'B. Coordinación de Calificación e Instrumentación' },
+    { value: 'Administración', label: 'C. Administración' },
+    { value: 'Jurídico', label: 'D. Jurídico' }
 ];
 
 const AreaSelectionSection = ({ meetingData, updateSelectedAreas }) => {

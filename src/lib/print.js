@@ -23,498 +23,372 @@ export const generatePrintHTML = (meetingData) => {
           <meta charset="UTF-8">
           <title>Minuta de Reunión Digital</title>
           <style>
-            @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+            @page {
+              margin: 3cm 2.5cm 3cm 2.5cm;
+              size: A4;
+            }
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
             
             * {
               box-sizing: border-box;
+              margin: 0;
+              padding: 0;
             }
             
             body {
-              font-family: 'Roboto', Arial, sans-serif;
-              margin: 40px;
-              line-height: 1.4;
-              color: #1a1a1a;
+              font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              margin: 0;
+              padding: 2rem;
+              line-height: 1.6;
+              color: #2c3e50;
               font-size: 12px;
+              background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+              min-height: 100vh;
             }
             
-            /* Controles de salto de página */
             .page-break-before {
               page-break-before: always;
               break-before: always;
+              padding-top: 2rem;
             }
             
             .page-break-after {
               page-break-after: always;
               break-after: always;
+              padding-bottom: 2rem;
             }
             
             .avoid-break {
               page-break-inside: avoid;
               break-inside: avoid;
+              margin-bottom: 1.5rem;
             }
             
-            .keep-together {
-              page-break-inside: avoid;
-              break-inside: avoid;
-              overflow: visible;
+            .section-container {
+              margin-bottom: 2rem;
+              min-height: 4rem;
             }
             
+            /* Header rediseñado */
             .header {
               display: flex;
               justify-content: space-between;
               align-items: center;
               text-align: center;
-              font-weight: bold;
-              font-size: 16px;
-              margin-bottom: 25px;
-              border-bottom: 3px solid #852a41;
-              padding-bottom: 12px;
-              page-break-inside: avoid;
-              break-inside: avoid;
+              font-weight: 600;
+              font-size: 18px;
+              margin-bottom: 3rem;
+              padding: 1.5rem 2rem;
+              background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #7c3aed 100%);
+              color: white;
+              border-radius: 12px;
+              box-shadow: 0 8px 32px rgba(30, 58, 138, 0.3);
+              position: relative;
+              overflow: hidden;
+            }
+            
+            .header::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%);
+              background-size: 20px 20px;
+              animation: shine 20s linear infinite;
+            }
+            
+            @keyframes shine {
+              0% { background-position: 0 0; }
+              100% { background-position: 40px 40px; }
             }
             
             .header-title {
                 flex-grow: 1;
                 text-align: center;
-                color: #852a41;
+                letter-spacing: 3px;
+                font-weight: 700;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                z-index: 1;
+                position: relative;
             }
             
             .logo {
-                max-width: 120px;
-                max-height: 60px;
+                max-width: 140px;
+                max-height: 70px;
                 object-fit: contain;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 1;
+                position: relative;
             }
             
+            /* Secciones */
             .section {
-              margin-bottom: 20px;
-              page-break-inside: avoid;
-              break-inside: avoid;
+              margin-bottom: 2.5rem;
+              background: white;
+              border-radius: 12px;
+              padding: 1.5rem 2rem;
+              box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+              border: 1px solid rgba(226, 232, 240, 0.8);
+              position: relative;
+              overflow: hidden;
             }
             
-            .section.allow-break {
-              page-break-inside: auto;
-              break-inside: auto;
+            .section::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 4px;
+              height: 100%;
+              background: linear-gradient(180deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
             }
             
             .section-title {
               font-weight: 700;
-              font-size: 14px;
-              margin-bottom: 12px;
-              border-bottom: 2px solid #baa579;
-              padding-bottom: 4px;
-              color: #852a41;
-              page-break-after: avoid;
-              break-after: avoid;
+              font-size: 16px;
+              margin-bottom: 1.5rem;
+              color: #1e293b;
+              padding-left: 1rem;
+              position: relative;
+              display: flex;
+              align-items: center;
             }
             
-            .info-grid {
-              display: grid;
-              grid-template-columns: 1fr 1fr 1fr;
-              gap: 15px;
-              margin-bottom: 15px;
-              page-break-inside: avoid;
-              break-inside: avoid;
+            .section-title::before {
+              content: '';
+              position: absolute;
+              left: -1rem;
+              width: 6px;
+              height: 6px;
+              background: #3b82f6;
+              border-radius: 50%;
+              box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
             }
             
-            .info-item {
-              padding-bottom: 4px;
-            }
-            
-            .info-label {
-              font-weight: 700;
-              font-size: 11px;
-              color: #852a41;
-            }
-            
-            .info-value {
-              margin-top: 4px;
-              border-bottom: 1px solid #ccc;
-              padding-bottom: 2px;
-              min-height: 1em;
-            }
-            
-            .content-box {
-              border: 1px solid #e0e0e0;
-              padding: 10px;
-              min-height: 60px;
-              margin-bottom: 12px;
-              white-space: pre-wrap;
-              background-color: #fcfcfc;
-              border-radius: 3px;
-              page-break-inside: avoid;
-              break-inside: avoid;
-            }
-            
-            .content-box.large-content {
-              page-break-inside: auto;
-              break-inside: auto;
-            }
-            
-            /* Tablas optimizadas para PDF */
-            .agreements-table, .attendees-table {
+            /* Tablas */
+            .table-wrapper {
               width: 100%;
-              border-collapse: collapse;
-              margin-bottom: 15px;
-              font-size: 11px;
+              overflow: hidden;
+              margin-bottom: 2rem;
+              background: white;
+              border-radius: 12px;
+              box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+              border: 1px solid #e2e8f0;
+            }
+            
+            .agreements-table, .attendees-table, .activities-table {
+              width: 100%;
+              border-collapse: separate;
+              border-spacing: 0;
+              font-size: 12px;
+              table-layout: fixed;
+              background: white;
             }
             
             .agreements-table th, .agreements-table td, 
-            .attendees-table th, .attendees-table td {
-              border: 1px solid #ccc;
-              padding: 6px 8px;
+            .attendees-table th, .attendees-table td,
+            .activities-table th, .activities-table td {
+              padding: 1rem;
               text-align: left;
               vertical-align: top;
+              word-wrap: break-word;
+              overflow-wrap: break-word;
+              border-bottom: 1px solid #f1f5f9;
             }
             
-            .agreements-table th, .attendees-table th {
-              background-color: #f2f2f2;
-              font-weight: 700;
-              color: #333;
-              page-break-after: avoid;
-              break-after: avoid;
-            }
-            
-            .agreements-table tr, .attendees-table tr {
-              page-break-inside: avoid;
-              break-inside: avoid;
-            }
-            
-            .table-container {
-              page-break-inside: avoid;
-              break-inside: avoid;
-              margin-bottom: 20px;
-            }
-            
-            .table-container.large-table {
-              page-break-inside: auto;
-              break-inside: auto;
-            }
-            
-            /* Sección de firmas optimizada para evitar duplicación */
-            .signatures-section {
-              margin-top: 30px;
-              page-break-inside: avoid !important;
-              break-inside: avoid !important;
-              overflow: hidden;
-            }
-            
-            .signatures-container {
-              display: flex;
-              flex-wrap: wrap;
-              gap: 15px;
-              page-break-inside: avoid !important;
-              break-inside: avoid !important;
-            }
-            
-            .signature-item {
-              flex: 1 1 45%;
-              min-width: 280px;
-              border: 1px solid #ddd;
-              border-radius: 6px;
-              padding: 12px;
-              margin-bottom: 10px;
-              page-break-inside: avoid !important;
-              break-inside: avoid !important;
+            .agreements-table th, .attendees-table th, .activities-table th {
+              background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+              color: white;
+              font-weight: 600;
               font-size: 11px;
-              box-sizing: border-box;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              position: relative;
             }
             
-            .signature-content {
-              width: 100%;
+            /* Firmas */
+            .signatures-section {
+              margin-top: 3rem;
+              background: white;
+              border-radius: 12px;
+              padding: 2rem;
+              box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+              border: 1px solid #e2e8f0;
+              position: relative;
               overflow: hidden;
             }
-            
-            .signature-area {
-              margin-top: 8px;
-              min-height: 80px;
-            }
-            
-            .signature-image {
-              max-width: 100%;
-              max-height: 70px;
-              object-fit: contain;
-              margin: 5px 0;
-              display: block;
-            }
-            
-            .signature-placeholder {
-              font-style: italic;
-              color: #666;
-              padding: 20px 0;
-              text-align: center;
-              border: 1px dashed #ccc;
-              margin-top: 5px;
-            }
-            
-            .signature-row-start {
-              page-break-before: avoid !important;
-              break-before: avoid !important;
-            }
-            
+
             /* Sección final */
             .final-section {
               text-align: center;
-              margin-top: 40px;
-              padding-top: 20px;
-              border-top: 3px solid #852a41;
-              page-break-inside: avoid;
-              break-inside: avoid;
+              margin-top: 4rem;
+              padding: 2.5rem 2rem;
+              background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+              color: white;
+              border-radius: 12px;
+              box-shadow: 0 8px 32px rgba(30, 41, 59, 0.3);
+              position: relative;
+              overflow: hidden;
             }
-            
-            .quote-text {
-              font-size: 14px;
-              font-style: italic;
-              margin-bottom: 20px;
-              color: #333;
-            }
-            
-            .responsible-section {
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              gap: 25px;
-              margin-top: 15px;
-              text-align: left;
-            }
-            
-            .responsible-group {
-              background-color: #f9f9f9;
-              padding: 12px;
-              border: 1px solid #ddd;
-              border-radius: 3px;
-              page-break-inside: avoid;
-              break-inside: avoid;
-            }
-            
-            .responsible-title {
-              font-weight: 700;
-              margin-bottom: 8px;
-              color: #852a41;
-              font-size: 12px;
-            }
-            
-            .responsible-list {
-              list-style-type: decimal;
-              padding-left: 18px;
-              margin: 0;
-              font-size: 11px;
-            }
-            
-            .responsible-list li {
-              margin-bottom: 3px;
-            }
-            
-            /* Media queries para impresión */
+
+            /* 🔹 Reglas impresión */
             @media print {
               body { 
-                margin: 15px;
+                margin: 0 !important;
+                padding: 1.5rem !important;
                 font-size: 11px;
+                background: white !important;
               }
-              
-              .header {
-                font-size: 14px;
-                margin-bottom: 20px;
-              }
-              
-              .section-title {
-                font-size: 13px;
-              }
-              
-              /* Asegurar que las tablas no se rompan mal */
-              .agreements-table, .attendees-table {
-                font-size: 10px;
-              }
-              
-              .agreements-table th, .agreements-table td,
-              .attendees-table th, .attendees-table td {
-                padding: 4px 6px;
-              }
-              
-              /* Controles específicos para firmas en impresión */
-              .signatures-section {
-                page-break-inside: avoid !important;
-                overflow: visible;
-              }
-              
-              .signatures-container {
-                page-break-inside: avoid !important;
-              }
-              
+
+              /* Solo evitar cortes en headers/títulos/firmas */
+              .header,
+              .section-title,
+              .signatures-section,
               .signature-item {
-                page-break-inside: avoid !important;
-                margin-bottom: 8px;
+                page-break-inside: avoid;
+                break-inside: avoid;
+              }
+
+              /* Secciones grandes pueden dividirse */
+              .section,
+              .table-wrapper,
+              .agreements-table,
+              .attendees-table,
+              .activities-table,
+              .content-box {
+                page-break-inside: auto;
+                break-inside: auto;
+              }
+
+              .page-break-before {
+                page-break-before: always;
+                break-before: always;
+              }
+
+              * {
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
               }
             }
-            
+
             @page {
-              margin: 1.5cm;
+              margin: 2.5cm;
               size: A4;
             }
           </style>
         </head>
         <body>
-          <header class="header avoid-break">
+          <header class="header">
             ${logo ? `<img src="${logo}" alt="Logotipo" class="logo" />` : '<div></div>'}
             <div class="header-title">M I N U T A &nbsp; D E &nbsp; R E U N I Ó N</div>
             <div></div>
           </header>
 
           <main>
-            <section class="section avoid-break">
+            <section class="section">
               <div class="section-title">1. LUGAR, FECHA Y HORA</div>
               <div class="info-grid">
-                <div class="info-item">
-                  <div class="info-label">LUGAR:</div>
-                  <div class="info-value">${lugar || ''}</div>
-                </div>
-                <div class="info-item">
-                  <div class="info-label">FECHA:</div>
-                  <div class="info-value">${fecha || ''}</div>
-                </div>
-                <div class="info-item">
-                  <div class="info-label">HORA:</div>
-                  <div class="info-value">${hora || ''}</div>
-                </div>
+                <div class="info-item"><div class="info-label">LUGAR:</div><div class="info-value">${lugar || ''}</div></div>
+                <div class="info-item"><div class="info-label">FECHA:</div><div class="info-value">${fecha || ''}</div></div>
+                <div class="info-item"><div class="info-label">HORA:</div><div class="info-value">${hora || ''}</div></div>
               </div>
             </section>
             
-            <section class="section avoid-break">
-                <div class="section-title">2. ÁREAS DE TRABAJO SELECCIONADAS</div>
-                <p><strong>Área Normativa:</strong> ${(selected_normativa || []).join(', ') || 'N/A'}</p>
-                <p><strong>Área Administrativa:</strong> ${(selected_administrativa || []).join(', ') || 'N/A'}</p>
+            <section class="section">
+              <div class="section-title">2. ÁREAS DE TRABAJO SELECCIONADAS</div>
+              <p><strong>Área Normativa:</strong> ${(selected_normativa || []).join(', ') || 'N/A'}</p>
+              <p><strong>Área Administrativa:</strong> ${(selected_administrativa || []).join(', ') || 'N/A'}</p>
             </section>
 
-            <section class="section avoid-break">
-                <div class="section-title">3. TITULARES DE ÁREA</div>
-                <div class="content-box">
-                    ${(titulares && Object.keys(titulares).length > 0) ? Object.entries(titulares).map(([area, titular]) => 
-                      `<div>
-                      <strong>${area}:</strong> ${titular}
-                      </div>`).join('') : 'No se especificaron titulares.'}
-                </div>
+            <section class="section">
+              <div class="section-title">3. TITULARES DE ÁREA</div>
+              <div class="content-box">
+                ${(titulares && Object.keys(titulares).length > 0) 
+                  ? Object.entries(titulares).map(([area, titular]) => `<div><strong>${area}:</strong> ${titular}</div>`).join('') 
+                  : 'No se especificaron titulares.'}
+              </div>
             </section>
 
-            <section class="section ${(exposicion_areas && exposicion_areas.length > 200) ? 'allow-break' : 'avoid-break'}">
-                <div class="section-title">4. EXPOSICIÓN DE LAS ÁREAS</div>
-                <div class="content-box ${(exposicion_areas && exposicion_areas.length > 200) ? 'large-content' : ''}">${exposicion_areas || ''}</div>
+            <section class="section section-container">
+              <div class="section-title">4. EXPOSICIÓN DE LAS ÁREAS</div>
+              <div class="content-box">${exposicion_areas || ''}</div>
             </section>
             
-            <section class="section ${(exposicion_ct && exposicion_ct.length > 200) ? 'allow-break' : 'avoid-break'}">
-                <div class="section-title">5. EXPOSICIÓN DE LA CT</div>
-                <div class="content-box ${(exposicion_ct && exposicion_ct.length > 200) ? 'large-content' : ''}">${exposicion_ct || ''}</div>
+            <section class="section section-container">
+              <div class="section-title">5. EXPOSICIÓN DE LA CT</div>
+              <div class="content-box">${exposicion_ct || ''}</div>
             </section>
 
-            <section class="section allow-break">
-              <div class="section-title avoid-break">6. ACUERDOS</div>
-
-              ${(acuerdos || []).map(acuerdo => `
-                <div class="table-container" style="margin-bottom:20px;">
-                  <table class="agreements-table">
-                    <thead>
-                      <tr>
-                        <th>DESCRIPCIÓN</th>
-                        <th>RESPONSABLE</th>
-                        <th>FECHA ENTREGA</th>
-                        <th>REQUERIMIENTOS</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>${acuerdo.descripcion || ''}</td>
-                        <td>${acuerdo.responsable || ''}</td>
-                        <td>${acuerdo.fecha || ''}</td>
-                        <td>${acuerdo.requerimientos || ''}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-
-                  ${(acuerdo.actividades && acuerdo.actividades.length > 0) ? `
-                    <table class="agreements-table" style="margin-top:8px;">
+            <section class="section">
+              <div class="section-title">6. ACUERDOS</div>
+              ${(acuerdos || []).map((acuerdo, index) => `
+                <div style="margin-bottom: 2rem;">
+                  <h4 class="agreement-title">Acuerdo ${index + 1}</h4>
+                  <div class="table-wrapper">
+                    <table class="agreements-table">
                       <thead>
-                        <tr>
-                          <th>Actividad</th>
-                          <th>Responsables</th>
-                          <th>Entregable</th>
-                          <th>Fecha Inicio</th>
-                          <th>Fecha Fin</th>
-                        </tr>
+                        <tr><th>DESCRIPCIÓN</th><th>RESPONSABLE</th><th>FECHA ENTREGA</th><th>REQUERIMIENTOS</th></tr>
                       </thead>
                       <tbody>
-                        ${acuerdo.actividades.map(act => `
-                          <tr>
-                            <td>${act.actividad || ''}</td>
-                            <td>${(act.responsables || []).filter(r => r.trim()).join(', ')}</td>
-                            <td>${act.entregable || ''}</td>
-                            <td>${act.fechaInicio || ''}</td>
-                            <td>${act.fechaFin || ''}</td>
-                          </tr>
-                        `).join('')}
+                        <tr>
+                          <td>${acuerdo.descripcion || ''}</td>
+                          <td>${acuerdo.responsable || ''}</td>
+                          <td>${acuerdo.fecha || ''}</td>
+                          <td>${acuerdo.requerimientos || ''}</td>
+                        </tr>
                       </tbody>
                     </table>
-                  ` : ''}
-                </div>
-              `).join('')}
+                  </div>
+                </div>`).join('')}
             </section>
 
-            <section class="section allow-break">
-              <div class="section-title avoid-break">7. ASISTENTES</div>
-              <div class="table-container ${(asistentes && asistentes.length > 10) ? 'large-table' : ''}">
+            <section class="section">
+              <div class="section-title">7. ASISTENTES</div>
+              <div class="table-wrapper">
                 <table class="attendees-table">
-                    <thead>
-                        <tr>
-                            <th>NOMBRE</th>
-                            <th>PUESTO</th>
-                            <th>ÁREA</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                  <thead><tr><th>NOMBRE</th><th>PUESTO</th><th>ÁREA</th></tr></thead>
+                  <tbody>
                     ${(asistentes || []).filter(a => a.nombre && a.nombre.trim()).map(asistente => `
-                      <tr>
-                        <td>${asistente.nombre || ''}</td>
-                        <td>${asistente.puesto || ''}</td>
-                        <td>${asistente.area || ''}</td>
-                      </tr>
+                      <tr><td>${asistente.nombre}</td><td>${asistente.puesto}</td><td>${asistente.area}</td></tr>
                     `).join('')}
-                    </tbody>
+                  </tbody>
                 </table>
               </div>
             </section>
 
             ${(signers && signers.length > 0) ? `
-            <section class="section signatures-section page-break-before">
-              <div class="section-title">8. FIRMAS DIGITALES DE REPRESENTANTES</div>
+            <section class="signatures-section">
+              <div class="section-title" style="color: #1e293b;">8. FIRMAS</div>
               <div class="signatures-container">
-                ${(signers || []).map((signer, index) => `
-                  <div class="signature-item ${index % 2 === 0 && index > 0 ? 'signature-row-start' : ''}">
+                ${signers.map(signer => `
+                  <div class="signature-item">
                     <div class="signature-content">
                       <div><strong>Nombre:</strong> ${signer.text || ''}</div>
                       <div><strong>Correo:</strong> ${signer.email || ''}</div>
                       <div class="signature-area">
                         <strong>Firma:</strong><br/>
-                        ${signer.signature ? `<img src="${signer.signature}" alt="Firma" class="signature-image"/>` : '<div class="signature-placeholder">Sin firma</div>'}
+                        ${signer.signature ? `<img src="${signer.signature}" class="signature-image"/>` : '<div>Sin firma</div>'}
                       </div>
                     </div>
-                  </div>
-                `).join('')}
+                  </div>`).join('')}
               </div>
             </section>` : ''}
-            
 
-            <footer class="final-section avoid-break">
-                <div class="quote-text">"Un dedo no puede aplaudir, pero todos juntos sí."</div>
-                <div class="responsible-section">
-                  <div class="responsible-group">
-                    <div class="responsible-title">Responsables del Programa:</div>
-                    <ol class="responsible-list">
-                      ${(responsables_programa || []).filter(r => r && r.trim()).map(responsable => `<li>${responsable}</li>`).join('')}
-                    </ol>
-                  </div>
-                  <div class="responsible-group">
-                    <div class="responsible-title">Personal de Apoyo:</div>
-                    <ol class="responsible-list">
-                      ${(personal_apoyo || []).filter(p => p && p.trim()).map(apoyo => `<li>${apoyo}</li>`).join('')}
-                    </ol>
-                  </div>
+            <footer class="final-section page-break-before">
+              <div class="quote-text">"Un dedo no puede aplaudir, pero todos juntos sí."</div>
+              <div class="responsible-section">
+                <div class="responsible-group">
+                  <div class="responsible-title">Responsables del Programa:</div>
+                  <ul class="responsible-list">${(responsables_programa || []).map(r => `<li>${r}</li>`).join('')}</ul>
                 </div>
+                <div class="responsible-group">
+                  <div class="responsible-title">Personal de Apoyo:</div>
+                  <ul class="responsible-list">${(personal_apoyo || []).map(p => `<li>${p}</li>`).join('')}</ul>
+                </div>
+              </div>
             </footer>
           </main>
         </body>

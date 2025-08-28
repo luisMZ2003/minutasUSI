@@ -22,12 +22,19 @@ const AttendeesSection = ({ asistentes, addAsistente, removeAsistente, updateAsi
               placeholder={`Nombre Asistente ${index + 1}`}
               className="border-2 focus:border-wine-DEFAULT"
             />
-            <Input
+            <select
               value={asistente.puesto || ''}
               onChange={(e) => updateAsistente(index, 'puesto', e.target.value)}
-              placeholder="Puesto"
-              className="border-2 focus:border-wine-DEFAULT"
-            />
+              className="border-2 focus:border-wine-DEFAULT rounded px-3 py-2"
+            >
+              <option value="" disabled>Selecciona Puesto</option>
+              <option value="Director general">Director general</option>
+              <option value="Director de área">Director de área</option>
+              <option value="Coordinador">Coordinador</option>
+              <option value="Subdirector">Subdirector</option>
+              <option value="Jefe de departamento">Jefe de departamento</option>
+              <option value="Operativo">Operativo</option>
+            </select>
             <Input
               value={asistente.area || ''}
               onChange={(e) => updateAsistente(index, 'area', e.target.value)}
