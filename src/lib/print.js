@@ -364,7 +364,7 @@ export const generatePrintHTML = (meetingData) => {
         <body>
           <header class="header">
             ${logo ? `<img src="${logo}" alt="Logotipo" class="logo" />` : '<div></div>'}
-            <div class="header-title">M I N U T A &nbsp; D E &nbsp; R E U N I Ó N<br>${folio ? `<span style='font-size:18px;color:#1e40af;font-weight:bold;'>Folio: ${folio}</span>` : ''}</div>
+            <div class="header-title">M I N U T A &nbsp; D E &nbsp; R E U N I Ó N<br>${folio ? `<span style='font-size:18px;font-weight:bold;'>Folio: ${folio}</span>` : ''}</div>
             <div></div>
           </header>
 

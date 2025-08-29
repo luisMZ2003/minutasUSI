@@ -508,7 +508,7 @@ const AuthFormWithRedirect = ({ navigate }) => {
                 <h1 className="text-4xl font-bold text-wine-DEFAULT">M I N U T A - EI</h1>
                 <p className="text-gray-600 text-lg">Eficiencia Institucional 2025 - 2030</p>
                 {meetingData.folio && (
-                  <span className="text-blue-700 text-xl font-bold block mt-2">Folio: {meetingData.folio}</span>
+                  <span className="text-black-700 text-xl font-bold block mt-2">Folio: {meetingData.folio}</span>
                 )}
               </div>
             </div>
@@ -579,8 +579,10 @@ const AuthFormWithRedirect = ({ navigate }) => {
 
                     <Button
                       onClick={generatePdf}
-                      className="bg-green-600 hover:bg-green-700 px-8 py-3 text-lg font-semibold shadow-lg transition-all duration-300 text-white"
+                      className={`bg-green-600 hover:bg-green-700 px-8 py-3 text-lg font-semibold shadow-lg transition-all duration-300 text-white${!meetingData.folio ? ' opacity-60 cursor-not-allowed' : ''}`}
                       size="lg"
+                      disabled={!meetingData.folio}
+                      title={!meetingData.folio ? 'Guarda la minuta antes de descargar el PDF' : ''}
                     >
                       <Download className="h-5 w-5 mr-2" />
                       Descargar Minuta (PDF)

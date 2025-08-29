@@ -33,6 +33,8 @@ const UserMinutas = () => {
   };
 
   const handleDelete = async (id) => {
+    const confirmDelete = window.confirm('¿Estás seguro que deseas eliminar esta minuta? Esta acción no se puede deshacer.');
+    if (!confirmDelete) return;
     await supabase.from('minutas').delete().eq('id', id);
     setMinutas(minutas.filter(m => m.id !== id));
   };
