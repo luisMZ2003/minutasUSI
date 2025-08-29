@@ -523,7 +523,7 @@ const AuthFormWithRedirect = ({ navigate }) => {
               </div>
             ) : (
               <Card className="shadow-xl border-0 bg-white">
-                <CardHeader className="bg-wine-DEFAULT text-white rounded-t-lg">
+                <CardHeader className="bg-wine-DEFAULT text-black rounded-t-lg">
                   <CardTitle className="text-2xl flex items-center gap-2">
                     <FileText className="h-6 w-6" />
                     Formulario de Minuta de Reunión

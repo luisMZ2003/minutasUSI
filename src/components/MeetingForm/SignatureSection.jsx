@@ -30,8 +30,8 @@ const SignaturePad = ({ signer, index, updateSignerField, removeSigner }) => {
         <UserSquare className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
         <Input
           type="text"
-          value={signer.text ||''}
-          placeholder="Nombre del firmante"
+          value={signer.text || ''}
+          placeholder="      Nombre del firmante"
           onChange={(e) => updateSignerField(index, 'text', e.target.value)}
           className="pl-10 focus:border-wine-DEFAULT font-semibold"
         />
@@ -41,7 +41,7 @@ const SignaturePad = ({ signer, index, updateSignerField, removeSigner }) => {
         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
         <Input
           type="email"
-          placeholder="Correo institucional del firmante"
+          placeholder="      Correo institucional del firmante"
           value={signer.email || ''}
           onChange={(e) => updateSignerField(index, 'email', e.target.value)}
           className="pl-10 focus:border-wine-DEFAULT"
