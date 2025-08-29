@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 import { useMeetingData } from '@/hooks/useMeetingData';
 import { generatePrintHTML } from '@/lib/print';
+import { generarFolio } from '@/lib/generarFolio';
 import BasicInfoSection from '@/components/MeetingForm/BasicInfoSection';
 import AreaSelectionSection from '@/components/MeetingForm/AreaSelectionSection';
 import TitularesSection from '@/components/MeetingForm/TitularesSection';
@@ -200,8 +201,16 @@ const App = () => {
         title: "Guardando minuta...",
         description: "Por favor espere, estamos guardando la información.",
       });
+      let folio = meetingData.folio;
+      // Solo generar folio si es nueva minuta
+      if (!id) {
+        // Usar área normativa si existe, si no la administrativa
+        const area = meetingData.selected_normativa?.[0] || meetingData.selected_administrativa?.[0] || '';
+        folio = await generarFolio(supabase, meetingData.fecha, area);
+      }
       const minutaData = {
         ...meetingData,
+        folio,
         usuario_id: session?.user?.id,
         fecha: meetingData.fecha === '' ? null : meetingData.fecha
       };
@@ -219,6 +228,8 @@ const App = () => {
           .from('minutas')
           .insert([minutaData]);
         error = res.error;
+        // Actualizar meetingData local para mostrar el folio
+        setMeetingData(prev => ({ ...prev, folio }));
       }
       if (error) {
         toast({
@@ -496,6 +507,9 @@ const AuthFormWithRedirect = ({ navigate }) => {
               <div>
                 <h1 className="text-4xl font-bold text-wine-DEFAULT">M I N U T A - EI</h1>
                 <p className="text-gray-600 text-lg">Eficiencia Institucional 2025 - 2030</p>
+                {meetingData.folio && (
+                  <span className="text-blue-700 text-xl font-bold block mt-2">Folio: {meetingData.folio}</span>
+                )}
               </div>
             </div>
             <div className="flex items-center gap-4">

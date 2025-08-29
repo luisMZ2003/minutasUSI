@@ -79,7 +79,7 @@ const UserMinutas = () => {
             <thead>
               <tr>
                 <th>#</th>
-                <th>Título</th>
+                <th>Folio</th>
                 <th className="text-center">Acciones</th>
               </tr>
             </thead>
@@ -92,7 +92,7 @@ const UserMinutas = () => {
                 minutas.map((minuta, idx) => (
                   <tr key={minuta.id}>
                     <td>{idx + 1}</td>
-                    <td>{minuta.titulo || `Minuta #${minuta.id}`}</td>
+                    <td>{minuta.folio || minuta.titulo || `Minuta #${minuta.id}`}</td>
                     <td className="text-center">
                       <div className="d-inline-flex gap-2">
                         <button className="btn btn-warning d-flex align-items-center px-3 py-2" style={{minWidth: '110px'}} onClick={() => handleEdit(minuta.id)} title="Editar">
