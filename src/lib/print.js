@@ -17,6 +17,23 @@ export const generatePrintHTML = (meetingData) => {
     folio
   } = meetingData;
 
+    // Helper to chunk array into pages
+    function chunkArray(array, chunkSize) {
+      const result = [];
+      for (let i = 0; i < array.length; i += chunkSize) {
+        result.push(array.slice(i, i + chunkSize));
+      }
+      return result;
+    }
+
+    // Configurable max rows per page - REDUCIDOS para evitar cortes
+    const maxAcuerdosPerPage = 4;  // Reducido de 8 a 4
+    const maxAsistentesPerPage = 12; // Reducido de 20 a 12
+
+    // Chunk acuerdos and asistentes
+    const acuerdosPages = chunkArray(acuerdos || [], maxAcuerdosPerPage);
+    const asistentesPages = chunkArray((asistentes || []).filter(a => a.nombre && a.nombre.trim()), maxAsistentesPerPage);
+
     return `
       <!DOCTYPE html>
       <html lang="es">
@@ -25,44 +42,47 @@ export const generatePrintHTML = (meetingData) => {
           <title>Minuta de Reunión Digital</title>
           <style>
             @page {
-              margin: 3cm 2.5cm 3cm 2.5cm;
-              size: A4;
+              margin: 2.5cm 2cm 2.5cm 2cm;
+              size: letter;
             }
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-            
             * {
               box-sizing: border-box;
               margin: 0;
               padding: 0;
             }
-            
             body {
               font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
               margin: 0;
-              padding: 2rem;
+              padding: 1.5rem;
               line-height: 1.6;
-              color: #744C34; /* Twine 700 */
+              color: #744C34;
               font-size: 12px;
-              background: linear-gradient(135deg, #F8F5EE 0%, #F4D7D9 100%); /* Twine 50 + Night Shadz 200 */
+              background: linear-gradient(135deg, #F8F5EE 0%, #F4D7D9 100%);
               min-height: 100vh;
             }
             
+            /* CLASES CRÍTICAS PARA CONTROL DE PÁGINAS */
             .page-break-before {
-              page-break-before: always;
-              break-before: always;
+              page-break-before: always !important;
+              break-before: always !important;
               padding-top: 2rem;
             }
             
             .page-break-after {
-              page-break-after: always;
-              break-after: always;
+              page-break-after: always !important;
+              break-after: always !important;
               padding-bottom: 2rem;
             }
             
-            .avoid-break {
-              page-break-inside: avoid;
-              break-inside: avoid;
-              margin-bottom: 1.5rem;
+            .no-break {
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
+            }
+            
+            .allow-break {
+              page-break-inside: auto !important;
+              break-inside: auto !important;
             }
             
             .section-container {
@@ -80,11 +100,13 @@ export const generatePrintHTML = (meetingData) => {
               font-size: 26px;
               margin-bottom: 3rem;
               padding: 1.5rem 2rem;
-              color: #842D42; /* Twine 50 */
+              color: #842D42;
               border-radius: 12px;
               box-shadow: 0 8px 32px rgba(30, 58, 138, 0.3);
               position: relative;
               overflow: hidden;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
             }
             
             .header::before {
@@ -143,18 +165,20 @@ export const generatePrintHTML = (meetingData) => {
               left: 0;
               width: 4px;
               height: 100%;
-              background: linear-gradient(180deg, #BF9B69 0%, #B84359 100%); /* Twine 400 + Night Shadz 600 */
+              background: linear-gradient(180deg, #BF9B69 0%, #B84359 100%);
             }
             
             .section-title {
               font-weight: 700;
               font-size: 16px;
               margin-bottom: 1.5rem;
-              color: #B84359; /* Night Shadz 600 */
+              color: #B84359;
               padding-left: 1rem;
               position: relative;
               display: flex;
               align-items: center;
+              page-break-after: avoid !important;
+              break-after: avoid !important;
             }
             
             .section-title::before {
@@ -163,27 +187,85 @@ export const generatePrintHTML = (meetingData) => {
               left: -1rem;
               width: 6px;
               height: 6px;
-              background: #A87D4A; /* Twine 500 */
+              background: #A87D4A;
               border-radius: 50%;
-              box-shadow: 0 0 0 3px rgba(184, 67, 89, 0.2); /* Night Shadz 600 */
+              box-shadow: 0 0 0 3px rgba(184, 67, 89, 0.2);
+            }
+            
+            /* INFO GRID */
+            .info-grid {
+              display: grid;
+              grid-template-columns: 1fr;
+              gap: 1rem;
+            }
+            
+            .info-item {
+              display: flex;
+              align-items: center;
+              gap: 1rem;
+            }
+            
+            .info-label {
+              font-weight: 600;
+              color: #B84359;
+              min-width: 80px;
+            }
+            
+            .info-value {
+              color: #744C34;
+            }
+            
+            .content-box {
+              background: #f8f9fa;
+              padding: 1.5rem;
+              border-radius: 8px;
+              border: 1px solid #e9ecef;
+              line-height: 1.7;
+            }
+            
+            /* Contenedores de tablas con control estricto de saltos */
+            .table-section {
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
+              margin-bottom: 2rem;
+            }
+            
+            .agreement-container {
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
+              margin-bottom: 2.5rem;
+              background: white;
+              padding: 1.5rem;
+              border-radius: 8px;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            }
+            
+            .agreement-title {
+              color: #B84359;
+              font-size: 14px;
+              font-weight: 600;
+              margin-bottom: 1rem;
+              padding-bottom: 0.5rem;
+              border-bottom: 2px solid #f1f5f9;
             }
             
             /* Tablas */
             .table-wrapper {
               width: 100%;
               overflow: hidden;
-              margin-bottom: 2rem;
               background: white;
-              border-radius: 12px;
-              box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+              border-radius: 8px;
+              box-shadow: 0 2px 12px rgba(0,0,0,0.06);
               border: 1px solid #e2e8f0;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
             }
             
             .agreements-table, .attendees-table, .activities-table {
               width: 100%;
               border-collapse: separate;
               border-spacing: 0;
-              font-size: 12px;
+              font-size: 11px;
               table-layout: fixed;
               background: white;
             }
@@ -191,7 +273,7 @@ export const generatePrintHTML = (meetingData) => {
             .agreements-table th, .agreements-table td, 
             .attendees-table th, .attendees-table td,
             .activities-table th, .activities-table td {
-              padding: 1rem;
+              padding: 0.8rem;
               text-align: left;
               vertical-align: top;
               word-wrap: break-word;
@@ -200,14 +282,24 @@ export const generatePrintHTML = (meetingData) => {
             }
             
             .agreements-table th, .attendees-table th, .activities-table th {
-              background: linear-gradient(135deg, #B84359 0%, #A87D4A 100%); /* Night Shadz 600 + Twine 500 */
-              color: #F8F5EE; /* Twine 50 */
+              background: linear-gradient(135deg, #B84359 0%, #A87D4A 100%);
+              color: #F8F5EE;
               font-weight: 600;
-              font-size: 11px;
+              font-size: 10px;
               text-transform: uppercase;
               letter-spacing: 0.5px;
               position: relative;
             }
+            
+            /* Distribución de columnas para tablas */
+            .agreements-table th:nth-child(1), .agreements-table td:nth-child(1) { width: 35%; }
+            .agreements-table th:nth-child(2), .agreements-table td:nth-child(2) { width: 25%; }
+            .agreements-table th:nth-child(3), .agreements-table td:nth-child(3) { width: 15%; }
+            .agreements-table th:nth-child(4), .agreements-table td:nth-child(4) { width: 25%; }
+            
+            .attendees-table th:nth-child(1), .attendees-table td:nth-child(1) { width: 40%; }
+            .attendees-table th:nth-child(2), .attendees-table td:nth-child(2) { width: 35%; }
+            .attendees-table th:nth-child(3), .attendees-table td:nth-child(3) { width: 25%; }
             
             /* Firmas */
             .signatures-section {
@@ -219,6 +311,31 @@ export const generatePrintHTML = (meetingData) => {
               border: 1px solid #e2e8f0;
               position: relative;
               overflow: hidden;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
+            }
+            
+            .signatures-container {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 2rem;
+            }
+            
+            .signature-item {
+              background: #f8f9fa;
+              padding: 1.5rem;
+              border-radius: 8px;
+              border: 1px solid #e9ecef;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
+            }
+            
+            .signature-content div {
+              margin-bottom: 1rem;
+            }
+            
+            .signature-area {
+              margin-top: 1.5rem;
             }
 
             /* Sección final */
@@ -234,6 +351,8 @@ export const generatePrintHTML = (meetingData) => {
               text-align: center;
               position: relative;
               overflow: hidden;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
             }
             .final-section::before {
               content: "";
@@ -315,49 +434,53 @@ export const generatePrintHTML = (meetingData) => {
               font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
             }
 
-            /* 🔹 Reglas impresión */
+            /* 🔹 Reglas críticas para impresión */
             @media print {
               body { 
                 margin: 0 !important;
-                padding: 1.5rem !important;
-                font-size: 11px;
+                padding: 1rem !important;
+                font-size: 10px;
                 background: white !important;
-              }
-
-              /* Solo evitar cortes en headers/títulos/firmas */
-              .header,
-              .section-title,
-              .signatures-section,
-              .signature-item {
-                page-break-inside: avoid;
-                break-inside: avoid;
-              }
-
-              /* Secciones grandes pueden dividirse */
-              .section,
-              .table-wrapper,
-              .agreements-table,
-              .attendees-table,
-              .activities-table,
-              .content-box {
-                page-break-inside: auto;
-                break-inside: auto;
-              }
-
-              .page-break-before {
-                page-break-before: always;
-                break-before: always;
-              }
-
-              * {
                 -webkit-print-color-adjust: exact;
                 color-adjust: exact;
               }
-            }
 
-            @page {
-              margin: 2.5cm;
-              size: A4;
+              @page {
+                margin: 2cm !important;
+                size: letter !important;
+              }
+
+              /* Elementos que NUNCA deben cortarse */
+              .header,
+              .section-title,
+              .table-section,
+              .agreement-container,
+              .table-wrapper,
+              .agreements-table,
+              .attendees-table,
+              .signatures-section,
+              .signature-item,
+              .final-section {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+              }
+
+              /* Forzar salto de página */
+              .page-break-before {
+                page-break-before: always !important;
+                break-before: always !important;
+              }
+
+              /* Evitar huérfanas y viudas */
+              p, div, h1, h2, h3, h4, h5, h6 {
+                orphans: 3;
+                widows: 3;
+              }
+
+              /* Ocultar animaciones y efectos */
+              .header::before {
+                display: none !important;
+              }
             }
           </style>
         </head>
@@ -369,7 +492,7 @@ export const generatePrintHTML = (meetingData) => {
           </header>
 
           <main>
-            <section class="section">
+            <section class="section no-break">
               <div class="section-title">1. LUGAR, FECHA Y HORA</div>
               <div class="info-grid">
                 <div class="info-item"><div class="info-label">LUGAR:</div><div class="info-value">${lugar || ''}</div></div>
@@ -378,13 +501,13 @@ export const generatePrintHTML = (meetingData) => {
               </div>
             </section>
             
-            <section class="section">
+            <section class="section no-break">
               <div class="section-title">2. ÁREAS DE TRABAJO SELECCIONADAS</div>
               <p><strong>Área Normativa:</strong> ${(selected_normativa || []).join(', ') || 'N/A'}</p>
               <p><strong>Área Administrativa:</strong> ${(selected_administrativa || []).join(', ') || 'N/A'}</p>
             </section>
 
-            <section class="section">
+            <section class="section no-break">
               <div class="section-title">3. TITULARES DE ÁREA</div>
               <div class="content-box">
                 ${(titulares && Object.keys(titulares).length > 0) 
@@ -393,55 +516,60 @@ export const generatePrintHTML = (meetingData) => {
               </div>
             </section>
 
-            <section class="section section-container">
+            <section class="section section-container allow-break">
               <div class="section-title">4. EXPOSICIÓN DE LAS ÁREAS</div>
               <div class="content-box">${exposicion_areas || ''}</div>
             </section>
             
-            <section class="section section-container">
+            <section class="section section-container allow-break">
               <div class="section-title">5. EXPOSICIÓN DE LA CT</div>
               <div class="content-box">${exposicion_ct || ''}</div>
             </section>
 
-            <section class="section">
-              <div class="section-title">6. ACUERDOS</div>
-              ${(acuerdos || []).map((acuerdo, index) => `
-                <div style="margin-bottom: 2rem;">
-                  <h4 class="agreement-title" style="margin-bottom: 0.75rem;">Acuerdo ${index + 1}</h4>
-                  <div class="table-wrapper">
-                    <table class="agreements-table">
-                      <thead>
-                        <tr><th>DESCRIPCIÓN</th><th>RESPONSABLE</th><th>FECHA ENTREGA</th><th>REQUERIMIENTOS</th></tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>${acuerdo.descripcion || ''}</td>
-                          <td>${acuerdo.responsable || ''}</td>
-                          <td>${acuerdo.fecha || ''}</td>
-                          <td>${acuerdo.requerimientos || ''}</td>
-                        </tr>
-                      </tbody>
-                    </table>
+            ${acuerdosPages.map((acuerdosChunk, pageIdx) => `
+              <section class="section table-section${pageIdx > 0 ? ' page-break-before' : ''}">
+                <div class="section-title">6. ACUERDOS${acuerdosPages.length > 1 ? ` (Página ${pageIdx + 1} de ${acuerdosPages.length})` : ''}</div>
+                ${acuerdosChunk.map((acuerdo, index) => `
+                  <div class="agreement-container">
+                    <h4 class="agreement-title">Acuerdo ${pageIdx * maxAcuerdosPerPage + index + 1}</h4>
+                    <div class="table-wrapper">
+                      <table class="agreements-table">
+                        <thead>
+                          <tr><th>DESCRIPCIÓN</th><th>RESPONSABLE</th><th>FECHA ENTREGA</th><th>REQUERIMIENTOS</th></tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>${acuerdo.descripcion || ''}</td>
+                            <td>${acuerdo.responsable || ''}</td>
+                            <td>${acuerdo.fecha || ''}</td>
+                            <td>${acuerdo.requerimientos || ''}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-                </div>`).join('')}
-            </section>
+                `).join('')}
+              </section>
+            `).join('')}
 
-            <section class="section">
-              <div class="section-title">7. ASISTENTES</div>
-              <div class="table-wrapper">
-                <table class="attendees-table">
-                  <thead><tr><th>NOMBRE</th><th>PUESTO</th><th>ÁREA</th></tr></thead>
-                  <tbody>
-                    ${(asistentes || []).filter(a => a.nombre && a.nombre.trim()).map(asistente => `
-                      <tr><td>${asistente.nombre}</td><td>${asistente.puesto}</td><td>${asistente.area}</td></tr>
-                    `).join('')}
-                  </tbody>
-                </table>
-              </div>
-            </section>
+            ${asistentesPages.map((asistentesChunk, pageIdx) => `
+              <section class="section table-section${pageIdx > 0 ? ' page-break-before' : ''}">
+                <div class="section-title">7. ASISTENTES${asistentesPages.length > 1 ? ` (Página ${pageIdx + 1} de ${asistentesPages.length})` : ''}</div>
+                <div class="table-wrapper">
+                  <table class="attendees-table">
+                    <thead><tr><th>NOMBRE</th><th>PUESTO</th><th>ÁREA</th></tr></thead>
+                    <tbody>
+                      ${asistentesChunk.map(asistente => `
+                        <tr><td>${asistente.nombre}</td><td>${asistente.puesto}</td><td>${asistente.area}</td></tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            `).join('')}
 
             ${(signers && signers.length > 0) ? `
-            <section class="signatures-section">
+            <section class="signatures-section page-break-before">
               <div class="section-title" style="color: #1e293b;">8. FIRMAS</div>
               <div class="signatures-container">
                 ${signers.map(signer => `

@@ -53,15 +53,15 @@ const UserMinutas = () => {
 
   return (
     <div className="container-xl px-2 sm:px-4">
-      <header className="bg-blue-600 font-bold uppercase text-white py-6 px-4 sm:py-10 sm:px-6 rounded shadow-lg mt-4 mb-4" style={{marginTop: '32px'}}>
+      <header className="bg-[#235B4E] font-bold uppercase text-white py-6 px-4 sm:py-10 sm:px-6 rounded shadow-lg mt-4 mb-4" style={{marginTop: '32px'}}>
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <h1 className="text-2xl sm:text-3xl font-bold mb-0 outfit-title">Mis Minutas</h1>
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-            <button className="btn btn-success d-flex align-items-center justify-center px-4 py-2 w-full sm:w-auto" style={{minWidth: '140px'}} onClick={handleCreate}>
+            <button className="btn bg-[#BF9B69] hover:bg-[#C8AB7C] d-flex align-items-center justify-center px-4 py-2 text-white w-full sm:w-auto" style={{minWidth: '140px'}} onClick={handleCreate}>
               <i className="material-icons mr-2"></i> Crear nueva minuta
             </button>
             <Button
-              className="btn btn-danger d-flex align-items-center justify-center px-4 py-2 w-full sm:w-auto"
+              className="btn bg-[#A7374F] hover:bg-[#D16272] d-flex align-items-center justify-center px-4 py-2 w-full sm:w-auto"
               style={{minWidth: '140px'}}
               onClick={async () => {
                 await signOut();
@@ -95,7 +95,7 @@ const UserMinutas = () => {
                     <td className="whitespace-nowrap">{minuta.folio || minuta.titulo || `Minuta #${minuta.id}`}</td>
                     <td className="text-center whitespace-nowrap">
                       <div className="flex flex-col sm:flex-row gap-2 justify-center items-center">
-                        <button className="btn btn-warning d-flex align-items-center justify-center px-3 py-2 w-full sm:w-auto" style={{minWidth: '90px'}} onClick={() => handleEdit(minuta.id)} title="Editar">
+                        <button className="btn bg-[#98989A] hover:bg-[#6F7271] d-flex align-items-center justify-center text-white px-3 py-2 w-full sm:w-auto" style={{minWidth: '90px'}} onClick={() => handleEdit(minuta.id)} title="Editar">
                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#fff" viewBox="0 0 24 24" className="mr-2"><path d="M3 17.25V21h3.75l11.06-11.06-3.75-3.75L3 17.25zm14.71-10.04a1.003 1.003 0 0 0 0-1.42l-2.5-2.5a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                           Editar
                         </button>
