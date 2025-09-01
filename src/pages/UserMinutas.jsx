@@ -99,7 +99,7 @@ const UserMinutas = () => {
                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#fff" viewBox="0 0 24 24" className="mr-2"><path d="M3 17.25V21h3.75l11.06-11.06-3.75-3.75L3 17.25zm14.71-10.04a1.003 1.003 0 0 0 0-1.42l-2.5-2.5a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                           Editar
                         </button>
-                        <button className="btn btn-danger d-flex align-items-center justify-center px-3 py-2 w-full sm:w-auto" style={{minWidth: '90px'}} onClick={() => handleDelete(minuta.id)} title="Eliminar">
+                        <button className="btn bg-[#A7374F] hover:bg-[#D16272] text-white d-flex align-items-center justify-center px-3 py-2 w-full sm:w-auto" style={{minWidth: '90px'}} onClick={() => handleDelete(minuta.id)} title="Eliminar">
                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#fff" viewBox="0 0 24 24" className="mr-2"><path d="M3 6h18v2H3V6zm2 3h14v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V9zm3 2v8h2v-8H8zm4 0v8h2v-8h-2z"/></svg>
                           Eliminar
                         </button>
