@@ -55,18 +55,28 @@ export const AuthProvider = ({ children }) => {
     // Esto permite que cada usuario tenga múltiples minutas y pueda administrarlas (crear, actualizar, eliminar) en el futuro.
     // La lógica para listar, actualizar y eliminar minutas por usuario se desarrollará más adelante.
     const userId = data?.user?.id;
-    if (userId) {
-      const { error: dbError } = await supabase
-        .from('usuarios')
-        .insert([{ id: userId, email }]);
-      if (dbError) {
-        toast({
-          variant: "destructive",
-          title: "Error creando usuario en la base de datos",
-          description: dbError.message,
-        });
+      if (userId) {
+        // Verificar si el usuario ya existe en la tabla usuarios
+        const { data: userDb, error: dbErrorSelect } = await supabase
+          .from('usuarios')
+          .select('id')
+          .eq('id', userId)
+          .single();
+        if (!userDb && !dbErrorSelect) {
+          // Si no existe, lo creamos
+          const { error: dbErrorInsert } = await supabase
+            .from('usuarios')
+            .insert([{ id: userId, email }]);
+          if (dbErrorInsert) {
+            toast({
+              variant: "destructive",
+              title: "Error creando usuario en la base de datos",
+              description: dbErrorInsert.message,
+            });
+          }
+        }
+        // Si ya existe, no hacemos nada y no mostramos error
       }
-    }
 
     return { error };
   }, [toast]);

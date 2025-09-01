@@ -29,6 +29,8 @@ const AuthForm = ({ navigate }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
+  const [registerSuccess, setRegisterSuccess] = useState(false);
+  const [registerLoading, setRegisterLoading] = useState(false);
   const { signIn, signUp, loading } = useAuth();
 
   const handleSubmit = async (e) => {
@@ -37,7 +39,43 @@ const AuthForm = ({ navigate }) => {
     if (isLogin) {
       result = await signIn(email, password);
     } else {
+      setRegisterLoading(true);
       result = await signUp(email, password);
+      setRegisterLoading(false);
+      if (!result?.error) {
+        setRegisterSuccess(true);
+        // Mostrar notificación de verificación de correo
+        toast({
+          title: 'Registro exitoso',
+          description: 'Se ha enviado un correo de verificación. Por favor revisa tu bandeja de entrada.',
+          variant: 'default',
+        });
+        // Cambiar automáticamente a la vista de inicio de sesión después de 2.5s
+        setTimeout(() => {
+          setIsLogin(true);
+          setRegisterSuccess(false);
+        }, 2500);
+        return;
+      }
+    }
+    // Si hay error de clave duplicada, no mostrar ningún mensaje y no navegar
+    if (result?.error && result?.error?.message && result?.error?.message.includes('duplicate key value')) {
+      // Oculta el error completamente
+      return;
+    }
+    // Si hay otro error, mostrarlo normalmente, pero ignora los irrelevantes y el de clave duplicada
+    if (result?.error && !(
+      result?.error?.message && (
+        result?.error?.message.includes('row-level security policy') ||
+        result?.error?.message.includes('security purposes') ||
+        result?.error?.message.includes('duplicate key value')
+      )
+    )) {
+      toast({
+        title: 'Error',
+        description: result.error.message,
+        variant: 'destructive',
+      });
     }
     if (!result?.error) {
       navigate('/minutas');
@@ -58,6 +96,12 @@ const AuthForm = ({ navigate }) => {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-8">
+            {registerSuccess && (
+              <div className="flex flex-col items-center justify-center mb-6">
+                <CheckCircle className="text-green-600 w-12 h-12 mb-2" />
+                <span className="text-green-700 font-bold text-lg text-center">¡Registro exitoso!<br />Verifica tu correo electrónico para continuar.</span>
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <Label htmlFor="email" className="text-lg font-semibold text-gray-700 mb-2 block">Correo Electrónico</Label>
@@ -69,6 +113,7 @@ const AuthForm = ({ navigate }) => {
                   onChange={(e) => setEmail(e.target.value)} 
                   required 
                   className="h-12 text-base border-gray-300 focus:border-wine-DEFAULT focus:ring-wine-DEFAULT transition-all duration-300"
+                  disabled={registerLoading || registerSuccess}
                 />
               </div>
               <div>
@@ -81,14 +126,15 @@ const AuthForm = ({ navigate }) => {
                   onChange={(e) => setPassword(e.target.value)} 
                   required 
                   className="h-12 text-base border-gray-300 focus:border-wine-DEFAULT focus:ring-wine-DEFAULT transition-all duration-300"
+                  disabled={registerLoading || registerSuccess}
                 />
               </div>
               <button 
                 type="submit" 
-                disabled={loading} 
-                className="w-full h-12 text-xl bg-yellow-500 text-white font-bold shadow-lg rounded-xl transition-all duration-300 transform hover:scale-105"
+                disabled={loading || registerLoading || registerSuccess} 
+                className={`w-full h-12 text-xl bg-yellow-500 text-white font-bold shadow-lg rounded-xl transition-all duration-300 transform hover:scale-105 ${registerLoading || registerSuccess ? 'opacity-60 cursor-not-allowed' : ''}`}
               >
-                {loading ? <Loader2 className="mr-2 h-6 w-6 animate-spin" /> : (isLogin ? 'Entrar' : 'Registrarse')}
+                {(loading || registerLoading) ? <Loader2 className="mr-2 h-6 w-6 animate-spin" /> : (isLogin ? 'Entrar' : 'Registrarse')}
               </button>
             </form>
             <motion.button 
@@ -97,6 +143,7 @@ const AuthForm = ({ navigate }) => {
               className="w-full h-12 text-xl font-bold shadow-lg transition-all duration-300 transform hover:scale-105"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
+              disabled={registerLoading || (registerSuccess && !isLogin)}
             >
               {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
             </motion.button>
@@ -565,27 +612,25 @@ const AuthFormWithRedirect = ({ navigate }) => {
                     updateTeamMember={updateTeamMember}
                   />
                   
-                  <div className="flex justify-center items-center pt-6 gap-4">
-
-                        <Button
-                          onClick={saveMinuta}
-                          className="bg-blue-600 hover:bg-blue-700 px-8 py-3 text-lg font-semibold shadow-lg transition-all duration-300 text-white"
-                          size="lg"
-                        >
-                          <CheckCircle className="h-5 w-5 mr-2" />
-                          Guardar Minuta
-                        </Button>
-
+                  <div className="flex flex-col sm:flex-row justify-center items-center pt-6 gap-4 w-full">
+                    <Button
+                      onClick={saveMinuta}
+                      className="bg-blue-600 hover:bg-blue-700 px-6 py-3 text-base sm:text-lg font-semibold shadow-lg transition-all duration-300 text-white w-full sm:w-auto"
+                      size="lg"
+                    >
+                      <CheckCircle className="h-5 w-5 mr-2" />
+                      <span className="block text-center">Guardar<br className="sm:hidden" /> Minuta</span>
+                    </Button>
 
                     <Button
                       onClick={generatePdf}
-                      className={`bg-green-600 hover:bg-green-700 px-8 py-3 text-lg font-semibold shadow-lg transition-all duration-300 text-white${!meetingData.folio ? ' opacity-60 cursor-not-allowed' : ''}`}
+                      className={`bg-green-600 hover:bg-green-700 px-6 py-3 text-base sm:text-lg font-semibold shadow-lg transition-all duration-300 text-white w-full sm:w-auto${!meetingData.folio ? ' opacity-60 cursor-not-allowed' : ''}`}
                       size="lg"
                       disabled={!meetingData.folio}
                       title={!meetingData.folio ? 'Guarda la minuta antes de descargar el PDF' : ''}
                     >
                       <Download className="h-5 w-5 mr-2" />
-                      Descargar Minuta (PDF)
+                      <span className="block text-center">Descargar<br className="sm:hidden" /> Minuta (PDF)</span>
                     </Button>
                   </div>
                 </CardContent>

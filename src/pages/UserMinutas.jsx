@@ -52,37 +52,35 @@ const UserMinutas = () => {
   }
 
   return (
-    <div className="container-xl">
-      <header className="bg-blue-600 font-bold uppercase  text-white py-10 px-6 rounded shadow-lg mt-4 mb-4" style={{marginTop: '32px'}}>
-        <div className="d-flex justify-content-between align-items-center">
-          <h1 className="display-6 font-weight-bold mb-0 outfit-title">Mis Minutas</h1>
-          <div className=''>
-              <div className="d-flex gap-3 ml-auto">
-                <button className="btn btn-success d-flex align-items-center px-4 py-2" style={{minWidth: '170px'}} onClick={handleCreate}>
-                  <i className="material-icons mr-2"></i> Crear nueva minuta
-                </button>
-                <Button
-                  className="btn btn-danger d-flex align-items-center px-4 py-2"
-                  style={{minWidth: '170px'}}
-                  onClick={async () => {
-                    await signOut();
-                    navigate('/login');
-                  }}
-                >
-                  <i className="material-icons mr-2"></i> Cerrar sesión
-                </Button>
-              </div>
+    <div className="container-xl px-2 sm:px-4">
+      <header className="bg-blue-600 font-bold uppercase text-white py-6 px-4 sm:py-10 sm:px-6 rounded shadow-lg mt-4 mb-4" style={{marginTop: '32px'}}>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-0 outfit-title">Mis Minutas</h1>
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <button className="btn btn-success d-flex align-items-center justify-center px-4 py-2 w-full sm:w-auto" style={{minWidth: '140px'}} onClick={handleCreate}>
+              <i className="material-icons mr-2"></i> Crear nueva minuta
+            </button>
+            <Button
+              className="btn btn-danger d-flex align-items-center justify-center px-4 py-2 w-full sm:w-auto"
+              style={{minWidth: '140px'}}
+              onClick={async () => {
+                await signOut();
+                navigate('/login');
+              }}
+            >
+              <i className="material-icons mr-2"></i> Cerrar sesión
+            </Button>
           </div>
         </div>
       </header>
-      <div className="table-responsive">
-        <div className="table-wrapper">
-          <table className="table table-striped table-hover">
+      <div className="table-responsive" style={{overflowX: 'auto'}}>
+        <div className="table-wrapper min-w-full">
+          <table className="table table-striped table-hover min-w-full text-sm sm:text-base">
             <thead>
               <tr>
-                <th>#</th>
-                <th>Folio</th>
-                <th className="text-center">Acciones</th>
+                <th className="whitespace-nowrap">#</th>
+                <th className="whitespace-nowrap">Folio</th>
+                <th className="text-center whitespace-nowrap">Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -93,15 +91,15 @@ const UserMinutas = () => {
               ) : (
                 minutas.map((minuta, idx) => (
                   <tr key={minuta.id}>
-                    <td>{idx + 1}</td>
-                    <td>{minuta.folio || minuta.titulo || `Minuta #${minuta.id}`}</td>
-                    <td className="text-center">
-                      <div className="d-inline-flex gap-2">
-                        <button className="btn btn-warning d-flex align-items-center px-3 py-2" style={{minWidth: '110px'}} onClick={() => handleEdit(minuta.id)} title="Editar">
+                    <td className="whitespace-nowrap">{idx + 1}</td>
+                    <td className="whitespace-nowrap">{minuta.folio || minuta.titulo || `Minuta #${minuta.id}`}</td>
+                    <td className="text-center whitespace-nowrap">
+                      <div className="flex flex-col sm:flex-row gap-2 justify-center items-center">
+                        <button className="btn btn-warning d-flex align-items-center justify-center px-3 py-2 w-full sm:w-auto" style={{minWidth: '90px'}} onClick={() => handleEdit(minuta.id)} title="Editar">
                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#fff" viewBox="0 0 24 24" className="mr-2"><path d="M3 17.25V21h3.75l11.06-11.06-3.75-3.75L3 17.25zm14.71-10.04a1.003 1.003 0 0 0 0-1.42l-2.5-2.5a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                           Editar
                         </button>
-                        <button className="btn btn-danger d-flex align-items-center px-3 py-2" style={{minWidth: '110px'}} onClick={() => handleDelete(minuta.id)} title="Eliminar">
+                        <button className="btn btn-danger d-flex align-items-center justify-center px-3 py-2 w-full sm:w-auto" style={{minWidth: '90px'}} onClick={() => handleDelete(minuta.id)} title="Eliminar">
                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#fff" viewBox="0 0 24 24" className="mr-2"><path d="M3 6h18v2H3V6zm2 3h14v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V9zm3 2v8h2v-8H8zm4 0v8h2v-8h-2z"/></svg>
                           Eliminar
                         </button>
