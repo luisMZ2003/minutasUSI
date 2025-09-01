@@ -132,9 +132,11 @@ const AuthForm = ({ navigate }) => {
               <button 
                 type="submit" 
                 disabled={loading || registerLoading || registerSuccess} 
-                className={`w-full h-12 text-xl bg-yellow-500 text-white font-bold shadow-lg rounded-xl transition-all duration-300 transform hover:scale-105 ${registerLoading || registerSuccess ? 'opacity-60 cursor-not-allowed' : ''}`}
+                className={`w-full h-12 text-xl bg-yellow-500 text-white font-bold shadow-lg rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center ${registerLoading || registerSuccess ? 'opacity-60 cursor-not-allowed' : ''}`}
               >
-                {(loading || registerLoading) ? <Loader2 className="mr-2 h-6 w-6 animate-spin" /> : (isLogin ? 'Entrar' : 'Registrarse')}
+                {(loading || registerLoading)
+                  ? <span className="flex items-center justify-center w-full"><Loader2 className="h-6 w-6 animate-spin" /></span>
+                  : (isLogin ? 'Entrar' : 'Registrarse')}
               </button>
             </form>
             <motion.button 
