@@ -91,7 +91,7 @@ const AuthForm = ({ navigate }) => {
       >
         <Card className="w-full max-w-md shadow-2xl border-t-8 border-t-wine-DEFAULT rounded-xl overflow-hidden">
           <CardHeader className="bg-wine-DEFAULT py-2 p-3">
-            <CardTitle className="text-3xl font-extrabold text-black text-center">
+            <CardTitle className="text-3xl font-extrabold text-[#BF9B69] text-center">
               {isLogin ? 'Bienvenido' : 'Crea tu Cuenta'}
             </CardTitle>
           </CardHeader>
@@ -132,7 +132,7 @@ const AuthForm = ({ navigate }) => {
               <button 
                 type="submit" 
                 disabled={loading || registerLoading || registerSuccess} 
-                className={`w-full h-12 text-xl bg-yellow-500 text-white font-bold shadow-lg rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center ${registerLoading || registerSuccess ? 'opacity-60 cursor-not-allowed' : ''}`}
+                className={`w-full h-12 text-xl bg-[#A7374F] hover:bg-[#D16272] text-white font-bold shadow-lg rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center ${registerLoading || registerSuccess ? 'opacity-60 cursor-not-allowed' : ''}`}
               >
                 {(loading || registerLoading)
                   ? <span className="flex items-center justify-center w-full"><Loader2 className="h-6 w-6 animate-spin" /></span>
@@ -142,7 +142,7 @@ const AuthForm = ({ navigate }) => {
             <motion.button 
               type="button"
               onClick={() => setIsLogin(!isLogin)} 
-              className="w-full h-12 text-xl font-bold shadow-lg transition-all duration-300 transform hover:scale-105"
+              className="w-full h-12 pt-2 text-xl font-bold  transition-all duration-300 transform hover:scale-105"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               disabled={registerLoading || (registerSuccess && !isLogin)}
@@ -219,7 +219,7 @@ const AuthFormWithRedirect = ({ navigate }) => {
               <button 
                 type="submit" 
                 disabled={loading} 
-                className="w-full h-12 text-xl bg-yellow-500 text-white font-bold shadow-lg transition-all duration-300 transform hover:scale-105"
+                className="w-full h-12 text-xl bg-[#BF9B69]hover:bg-[#D16272] text-white font-bold shadow-lg transition-all duration-300 transform hover:scale-105"
               >
                 {loading ? <Loader2 className="mr-2 h-6 w-6 animate-spin" /> : (isLogin ? 'Entrar' : 'Registrarse')}
               </button>
