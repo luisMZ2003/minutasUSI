@@ -9,6 +9,8 @@ const UserMinutas = () => {
   const { user, signOut } = useAuth();
   const [minutas, setMinutas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchFolio, setSearchFolio] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -51,6 +53,16 @@ const UserMinutas = () => {
     return <div className="p-6 text-center text-red-600 font-bold">No hay usuario autenticado.</div>;
   }
 
+  // --- Filtro y paginado ---
+  const filteredMinutas = minutas.filter(m => {
+    if (!searchFolio.trim()) return true;
+    const folio = m.folio || m.titulo || "";
+    return folio.toLowerCase().includes(searchFolio.trim().toLowerCase());
+  });
+  const minutasPerPage = 10;
+  const totalPages = Math.ceil(filteredMinutas.length / minutasPerPage);
+  const paginatedMinutas = filteredMinutas.slice((currentPage - 1) * minutasPerPage, currentPage * minutasPerPage);
+
   return (
     <div className="container-xl px-2 sm:px-4">
       <header className="bg-[#235B4E] font-bold uppercase text-white py-6 px-4 sm:py-10 sm:px-6 rounded shadow-lg mt-4 mb-4" style={{marginTop: '32px'}}>
@@ -73,6 +85,16 @@ const UserMinutas = () => {
           </div>
         </div>
       </header>
+      {/* Buscador de folio */}
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
+        <input
+          type="text"
+          className="form-control w-full sm:w-1/3"
+          placeholder="Buscar por folio..."
+          value={searchFolio}
+          onChange={e => { setSearchFolio(e.target.value); setCurrentPage(1); }}
+        />
+      </div>
       <div className="table-responsive" style={{overflowX: 'auto'}}>
         <div className="table-wrapper min-w-full">
           <table className="table table-striped table-hover min-w-full text-sm sm:text-base">
@@ -84,14 +106,14 @@ const UserMinutas = () => {
               </tr>
             </thead>
             <tbody>
-              {minutas.length === 0 ? (
+              {paginatedMinutas.length === 0 ? (
                 <tr>
                   <td colSpan={3} className="text-center text-muted">No tienes minutas registradas.</td>
                 </tr>
               ) : (
-                minutas.map((minuta, idx) => (
+                paginatedMinutas.map((minuta, idx) => (
                   <tr key={minuta.id}>
-                    <td className="whitespace-nowrap">{idx + 1}</td>
+                    <td className="whitespace-nowrap">{(currentPage - 1) * minutasPerPage + idx + 1}</td>
                     <td className="whitespace-nowrap">{minuta.folio || minuta.titulo || `Minuta #${minuta.id}`}</td>
                     <td className="text-center whitespace-nowrap">
                       <div className="flex flex-col sm:flex-row gap-2 justify-center items-center">
@@ -112,6 +134,26 @@ const UserMinutas = () => {
           </table>
         </div>
       </div>
+      {/* Paginación */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-4">
+          <button
+            className="btn px-3 py-1 bg-[#BF9B69] text-white rounded disabled:opacity-50"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(currentPage - 1)}
+          >
+            &#8592;
+          </button>
+          <span className="px-2">Página {currentPage} de {totalPages}</span>
+          <button
+            className="btn px-3 py-1 bg-[#BF9B69] text-white rounded disabled:opacity-50"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(currentPage + 1)}
+          >
+            &#8594;
+          </button>
+        </div>
+      )}
     </div>
   );
 };
