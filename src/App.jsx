@@ -275,10 +275,15 @@ const App = () => {
         // Crear nueva minuta
         const res = await supabase
           .from('minutas')
-          .insert([minutaData]);
+          .insert([minutaData])
+          .select();
         error = res.error;
-        // Actualizar meetingData local para mostrar el folio
-        setMeetingData(prev => ({ ...prev, folio }));
+        // Si el folio viene en la respuesta, úsalo
+        let newFolio = folio;
+        if (res.data && res.data[0] && res.data[0].folio) {
+          newFolio = res.data[0].folio;
+        }
+        setMeetingData(prev => ({ ...prev, folio: newFolio }));
       }
       if (error) {
         toast({
@@ -454,57 +459,53 @@ const AuthFormWithRedirect = ({ navigate }) => {
   };
   
   const generatePdf = async () => {
-    toast({
-      title: "Generando PDF...",
-      description: "Por favor espere, esto puede tardar un momento.",
-    });
-
-    const printContainer = document.createElement('div');
-    printContainer.innerHTML = generatePrintHTML(meetingData);
-    printContainer.style.position = 'absolute';
-    printContainer.style.left = '-9999px';
-    printContainer.style.width = '210mm'; 
-    document.body.appendChild(printContainer);
-
     try {
-      const canvas = await html2canvas(printContainer, {
-        scale: 2,
-        useCORS: true, 
-        allowTaint: true
+      toast({
+        title: "Generando PDF...",
+        description: "Por favor espere, esto puede tardar un momento.",
       });
 
+      // Generar el HTML con tu función actual
+      const htmlString = generatePrintHTML(meetingData);
+
+      // Crear un contenedor temporal para el HTML
+  const printContainer = document.createElement("div");
+  printContainer.innerHTML = htmlString;
+  // Ajuste de estilos para evitar hojas en blanco
+      printContainer.style.width = '210mm';
+      printContainer.style.minHeight = '297mm';
+      printContainer.style.overflow = 'visible';
+      printContainer.style.pageBreakInside = 'avoid';
+      printContainer.style.background = '#fff';
+      printContainer.style.padding = '12mm';
+      printContainer.style.margin = '0';
+      // Reducir separación entre elementos hijos
+      Array.from(printContainer.querySelectorAll('*')).forEach(el => {
+        el.style.marginBottom = '16px'; // Espacio intermedio
+        el.style.paddingBottom = '0';
+        el.style.paddingTop = '0';
+      });
+  document.body.appendChild(printContainer);
+
+      // Opciones de exportación
+      const opt = {
+        margin:       [10, 10, 10, 10], // márgenes: top, right, bottom, left
+        filename:     `minuta_${meetingData.folio || 'sin_folio'}.pdf`,
+        image:        { type: "jpeg", quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: "mm", format: "a4", orientation: "p" }
+      };
+
+      // Importación dinámica para asegurar compatibilidad
+      const html2pdf = window.html2pdf || (await import('html2pdf.js')).default;
+      await html2pdf().set(opt).from(printContainer).save();
+
       document.body.removeChild(printContainer);
-
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      const ratio = imgWidth / imgHeight;
-      const widthInPdf = pdfWidth - 20; 
-      const heightInPdf = widthInPdf / ratio;
-      
-      let heightLeft = heightInPdf;
-      let position = 10; 
-
-      pdf.addImage(imgData, 'PNG', 10, position, widthInPdf, heightInPdf);
-      heightLeft -= (pdfHeight - 20);
-
-      while (heightLeft > 0) {
-        position = heightLeft - heightInPdf + 10;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 10, position, widthInPdf, heightInPdf);
-        heightLeft -= (pdfHeight - 20);
-      }
-      
-      pdf.save('minuta-reunion.pdf');
 
       toast({
         title: "¡Minuta descargada!",
         description: "El PDF de la minuta ha sido generado exitosamente.",
       });
-
     } catch (error) {
       console.error("Error generating PDF: ", error);
       toast({
@@ -512,24 +513,8 @@ const AuthFormWithRedirect = ({ navigate }) => {
         description: "Ocurrió un problema al crear el documento.",
         variant: "destructive",
       });
-      if (document.body.contains(printContainer)) {
-        document.body.removeChild(printContainer);
-      }
     }
   }
-
-  // The handleProcessAction function is no longer needed if the button is removed
-  // const handleProcessAction = async () => {
-  //   const emails = meetingData.signers?.map(s => s.email).filter(e => e);
-  //   if (emails.length < meetingData.signers.length) {
-  //     toast({
-  //       title: "Faltan correos electrónicos",
-  //       description: "Por favor, ingrese los correos de todos los firmantes.",
-  //       variant: "destructive",
-  //     });
-  //     return;
-  //   }
-    
   //   toast({
   //     title: "¡Proceso de firma iniciado!",
   //     description: `Se ha enviado una solicitud de firma a: ${emails.join(', ')}. (Simulación)`,
