@@ -91,7 +91,7 @@ const AuthForm = ({ navigate }) => {
       >
         <Card className="w-full max-w-md shadow-2xl border-t-8 border-t-wine-DEFAULT rounded-xl overflow-hidden">
           <CardHeader className="bg-wine-DEFAULT py-2 p-3">
-            <CardTitle className="text-3xl font-extrabold text-[#BF9B69] text-center">
+            <CardTitle className="text-3xl font-extrabold text-[#BF9B69] text-center font-patria">
               {isLogin ? 'Bienvenido' : 'Crea tu Cuenta'}
             </CardTitle>
           </CardHeader>

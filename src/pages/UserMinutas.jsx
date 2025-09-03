@@ -66,8 +66,8 @@ const UserMinutas = () => {
   return (
     <div className="container-xl px-2 sm:px-4">
       <header className="bg-[#235B4E] font-bold uppercase text-white py-6 px-4 sm:py-10 sm:px-6 rounded shadow-lg mt-4 mb-4" style={{marginTop: '32px'}}>
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-0 outfit-title">Mis Minutas</h1>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 font-patria">
+          <h1 className="text-2xl sm:text-3xl  font-patria mb-0  ">Mis Minutas</h1>
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <button className="btn bg-[#BF9B69] hover:bg-[#C8AB7C] d-flex align-items-center justify-center px-4 py-2 text-white w-full sm:w-auto" style={{minWidth: '140px'}} onClick={handleCreate}>
               <i className="material-icons mr-2"></i> Crear nueva minuta

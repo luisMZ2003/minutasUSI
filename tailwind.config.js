@@ -59,6 +59,9 @@ module.exports = {
           foreground: 'hsl(var(--gold-foreground))',
         }
 			},
+			fontFamily: {
+				'patria': ['Patria', 'sans-serif'],
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
